@@ -17,9 +17,6 @@ def get_diagnostics(dir: str | Path) -> Dict[str, int]:
 
     """
 
-    # Remove if you implement this task
-    raise NotImplementedError("Remove me if you implement this mandatory task")
-
     # Dictionary to return
     res = {
         "files": 0,
@@ -31,17 +28,57 @@ def get_diagnostics(dir: str | Path) -> Dict[str, int]:
         "other files": 0,
     }
 
+    
+    
     # Remember error handling
-    ...
+    if not isinstance(dir, (str, Path)):
+        raise TypeError('Object is not path. Expected a string or a Path.')
+    
+    directory = Path(dir)
 
-    # Traverse the directory and find its contents
-    contents = ...
+    if not directory.exists():
+        raise NotADirectoryError(f'The path "{directory}" does not exist.')
 
-    # Count folders and total num. of files
-    for path in contents:
-        ...
+    if not directory.is_dir():
+        raise NotADirectoryError(f' "{directory}" is not a directory')
+
+    
+    # Count folders and total num. of files using this function
+    def counter(directory):
+        
+        # Traverse the directory and find its contents
+        contents = directory.iterdir() 
+        
+        for path in contents:
+
+            #If the item in contents is a file, then sort the type
+            if path.is_file():
+                res["files"] +=1
+                suffi = path.suffix.lower()
+                suffix = f'{suffi} files'
+
+                if suffix in res:
+
+                    res[suffix] += 1
+                else:
+                    res["other files"] += 1
+
+            #If the item in contents is a subdirectory, then count it and run counter on the subdirectory
+            elif path.is_dir():
+                res["subdirectories"] += 1
+                counter(path)
+        
+        return 
+
+    count = counter(directory)
 
     return res
+
+here = Path(__file__).parent.absolute()
+assignment2 = Path(here).parent.absolute()
+
+res = get_diagnostics(assignment2/ 'pollution_data') #*** testing
+#print(call)
 
 
 def display_diagnostics(dir: str | Path, contents: Dict[str, int]) -> None:
@@ -68,12 +105,33 @@ def display_diagnostics(dir: str | Path, contents: Dict[str, int]) -> None:
     Returns:
         None
     """
-    # Remove if you implement this task
-    raise NotImplementedError("Remove me if you implement this mandatory task")
+     # Remember error handling
+    if not isinstance(dir, (str, Path)):
+        raise TypeError('Object is not path. Expected a string or a Path.')
+    
+    if not isinstance(contents, (dict)):
+        raise TypeError('Object is not a dictionary. Expected a dictionary.')
+    
+    path = Path(dir)
 
+    if not path.exists():
+        raise NotADirectoryError(f'The path "{path}" does not exist.')
+
+    if not path.is_dir():
+        raise NotADirectoryError(f' "{path}" is not a directory')
+
+    print('------------------------------------------------------------------------')
+    print(f'Diagnostics for: {path} \n')
+    print('------------------------------------------------------------------------')
+    
     # Print the summary to the terminal
-    ...
+    for key, value in contents.items():
+        print(f'Number of {key}: {value}')
 
+    print('------------------------------------------------------------------------')
+    return
+
+test = display_diagnostics(assignment2, res)
 
 def display_directory_tree(dir: str | Path, maxfiles: int = 3) -> None:
     """Display a directory tree, with root directory pointed to by dir.
@@ -88,10 +146,13 @@ def display_directory_tree(dir: str | Path, maxfiles: int = 3) -> None:
         None
 
     """
-    # NOTE: This is a bonus task, if you implementing it, remove `raise NotImplementedError`
-    raise NotImplementedError("Remove me if you implement this bonus task")
+    # # : This is a bonus task, if you implementing it, remove `raise NotImplementedError`
+    # raise NotImplementedError("Remove me if you implement this bonus task")
 
-    ...
+    directory = Path(dir)
+    res = get_diagnostics(dir)
+
+    
 
 
 def is_gas_csv(path: str | Path) -> bool:

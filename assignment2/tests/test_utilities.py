@@ -27,9 +27,20 @@ def test_get_diagnostics(example_config):
     Returns:
     None
     """
-    # Remove if you implement this task
-    raise NotImplementedError("Remove me if you implement this mandatory task")
-    ...
+    
+    function = get_diagnostics(example_config)
+
+    expected =  {
+        "files": 10,
+        "subdirectories": 5,
+        ".csv files": 8,
+        ".txt files": 0,
+        ".npy files": 2,
+        ".md files": 0,
+        "other files": 0,
+    }
+
+    assert function == expected
 
 
 @pytest.mark.task12
@@ -37,9 +48,13 @@ def test_get_diagnostics(example_config):
     "exception, dir",
     [
         (NotADirectoryError, "Not_a_real_directory"),
+        (TypeError, 3),
         # add more combinations of (exception, dir) here
     ],
 )
+
+
+
 def test_get_diagnostics_exceptions(exception, dir):
     """Test the error handling of get_diagnostics function
 
@@ -50,10 +65,8 @@ def test_get_diagnostics_exceptions(exception, dir):
     Returns:
         None
     """
-    # Remove if you implement this task
-    raise NotImplementedError("Remove me if you implement this mandatory task")
-    ...
-
+    with pytest.raises(exception):
+        get_diagnostics(dir)
 
 @pytest.mark.task22
 def test_is_gas_csv():
