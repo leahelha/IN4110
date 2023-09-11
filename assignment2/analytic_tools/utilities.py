@@ -131,7 +131,7 @@ def display_diagnostics(dir: str | Path, contents: Dict[str, int]) -> None:
     print('------------------------------------------------------------------------')
     return
 
-test = display_diagnostics(assignment2, res)
+#test = display_diagnostics(assignment2, res)
 
 def display_directory_tree(dir: str | Path, maxfiles: int = 3) -> None:
     """Display a directory tree, with root directory pointed to by dir.
@@ -146,13 +146,57 @@ def display_directory_tree(dir: str | Path, maxfiles: int = 3) -> None:
         None
 
     """
-    # # : This is a bonus task, if you implementing it, remove `raise NotImplementedError`
-    # raise NotImplementedError("Remove me if you implement this bonus task")
 
+
+    #ERROR HANDLING
+    if not isinstance(dir, (str, Path)):
+        raise TypeError('Object is not path. Expected a string or a Path.')
+    
+    if not isinstance(maxfiles, (int)):
+        raise TypeError('The second parameter, maxfiles, needs to be an integer.')
+    
+    if not maxfiles>1:
+        raise ValueError('The second parameter, maxfiles, cannot be smaller than 1.')
+    
     directory = Path(dir)
-    res = get_diagnostics(dir)
+
+
+    if not directory.exists():
+        raise NotADirectoryError(f'The path "{path}" does not exist.')
+
+    if not directory.is_dir():
+        raise NotADirectoryError(f' "{path}" is not a directory')
 
     
+    print('\n')
+    print(f"{directory}/")
+    def directory_tree(directory, round = 0):
+        contents = directory.iterdir()
+        nr_files = 0
+
+        for path in contents:
+            
+            if path.is_file() and nr_files==(maxfiles) and round>0:
+                nr_files += 1
+                print(f"{'    '*round}...")
+
+            if path.is_file() and nr_files<=maxfiles:
+                nr_files += 1
+                #print(f"{'   '*round}file nr {nr_files}")
+                print(f"{'    '*round}- {path.name}")   
+
+            elif path.is_dir():
+                #print('\n')
+                print(f"{'    '*round}> {path.name}")  
+                count = round
+                
+                directory_tree(path, count+1)
+
+    directory_tree = directory_tree(directory)
+    return
+
+    
+run = display_directory_tree(assignment2, maxfiles=3)
 
 
 def is_gas_csv(path: str | Path) -> bool:
