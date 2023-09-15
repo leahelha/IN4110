@@ -3,7 +3,7 @@
 
 # Import necessary packages here
 from pathlib import Path
-
+#*** IMPORT UTILITIES.PY AND TEST_UTILITIES.PY
 
 def restructure_pollution_data(pollution_dir: str | Path, dest_dir: str | Path) -> None:
     """This function searches the tree of pollution_data directory pointed to by pollution_dir for .csv files
@@ -106,7 +106,10 @@ def analyze_pollution_data_tmp(work_dir: str | Path) -> None:
 
 
 if __name__ == "__main__":
+
     # Create a variable holding the path to your working directory
-    work_dir = ...
+    here = Path(__file__).parent.absolute()
+    work_dir = here
+
     # Make a call to analyze_pollution_data
-    ...
+    analyze_pollution_data(work_dir)

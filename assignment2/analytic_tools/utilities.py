@@ -77,8 +77,8 @@ def get_diagnostics(dir: str | Path) -> Dict[str, int]:
 here = Path(__file__).parent.absolute()
 assignment2 = Path(here).parent.absolute()
 
-res = get_diagnostics(assignment2/ 'pollution_data') #*** testing
-#print(call)
+#res = get_diagnostics(assignment2/ 'pollution_data') #*** testing
+
 
 
 def display_diagnostics(dir: str | Path, contents: Dict[str, int]) -> None:
@@ -131,7 +131,7 @@ def display_diagnostics(dir: str | Path, contents: Dict[str, int]) -> None:
     print('------------------------------------------------------------------------')
     return
 
-#test = display_diagnostics(assignment2, res)
+#test = display_diagnostics(assignment2/'pollution_data', res)
 
 def display_directory_tree(dir: str | Path, maxfiles: int = 3) -> None:
     """Display a directory tree, with root directory pointed to by dir.
@@ -150,7 +150,7 @@ def display_directory_tree(dir: str | Path, maxfiles: int = 3) -> None:
 
     #ERROR HANDLING
     if not isinstance(dir, (str, Path)):
-        raise TypeError('Object is not path. Expected a string or a Path.')
+        raise TypeError(f'Object is not path. Expected a string or a Path.')
     
     if not isinstance(maxfiles, (int)):
         raise TypeError('The second parameter, maxfiles, needs to be an integer.')
@@ -170,6 +170,7 @@ def display_directory_tree(dir: str | Path, maxfiles: int = 3) -> None:
     
     print('\n')
     print(f"{directory}/")
+
     def directory_tree(directory, round = 0):
         contents = directory.iterdir()
         nr_files = 0
@@ -196,7 +197,7 @@ def display_directory_tree(dir: str | Path, maxfiles: int = 3) -> None:
     return
 
     
-run = display_directory_tree(assignment2, maxfiles=3)
+#run = display_directory_tree(assignment2/'pollution_data', maxfiles=3)
 
 
 def is_gas_csv(path: str | Path) -> bool:
@@ -210,17 +211,27 @@ def is_gas_csv(path: str | Path) -> bool:
     Returns
          - (bool) : Truth value of whether the file is an original gas file
     """
-    # Remove if you implement this task
-    raise NotImplementedError("Remove me if you implement this mandatory task")
-
     # Do correct error handling first
+    if not isinstance(path, (Path, str)):
+        raise TypeError(f'Object "{path}" is not path. Expected a string or a Path.')
+    
+    directory = Path(path)
+
+    if not directory.name.endswith('.csv'):
+        raise ValueError('The path does not lead to a .csv file.')
+    
     # Extract the filename from the .csv file and check if it is a valid greenhouse gas
-    ...
+    file = str(directory.name)
+    filename = file[:-4]
 
     # List of greenhouse gasses, correct filenames in front of a .csv ending
     gasses = ["CO2", "CH4", "N2O", "SF6", "H2"]
 
-    ...
+    if filename in gasses:
+        return True
+    else:
+        return False
+
 
 
 def get_dest_dir_from_csv_file(dest_parent: str | Path, file_path: str | Path) -> Path:
@@ -238,24 +249,45 @@ def get_dest_dir_from_csv_file(dest_parent: str | Path, file_path: str | Path) -
         - (pathlib.Path) : Absolute path to the derived directory
 
     """
-    # Remove if you implement this task
-    raise NotImplementedError("Remove me if you implement this mandatory task")
 
     # Do correct error handling first
+    if not (isinstance(dest_parent, (Path, str)) and isinstance(file_path, (Path, str))):
+        raise TypeError(f'Object "{dest_parent}" or "{file_path}" is not path. Expected a string or a Path.')
+    
+    file_path = Path(file_path)
 
-    ...
+    if not dest_parent.is_dir() or not dest_parent.exists():
+       raise NotADirectoryError(f'Directory {dest_parent} does not exist, or is not the path to a directory.')
+
+    if not file_path.is_file():
+        raise ValueError(f'The path {file_path} does not lead to a file.')
+
+    allowed_list = ['CO2.csv', 'CH4.csv', 'N2O.csv', 'SF6.csv', 'H2.csv']
+
+    if file_path.name not in allowed_list:
+        raise ValueError(f'The path {file_path} does not lead to an origianl .csv file.')
 
     # If the input file is valid:
+
+    filename = str(file_path.name)
+
     # Derive the name of the directory, pattern: gas_[gas_formula] directory
-    dest_name = ...
+    dest_name = filename[:-4]
+    
+
+    parent = Path(dest_parent)
+   
     # Derive its absolute path
-    dest_path = ...
+    dest_path = parent/f'gas_{dest_name}'
 
     # Check if the directory already exists, and create one of not
     if dest_path.exists():
         return dest_path
-    ...
+    if not dest_path.exists():
+        dest_path.mkdir()
+        return dest_path
 
+#lets_try_it = get_dest_dir_from_csv_file(assignment2/'pollution_data_restructured'/'by_gas', assignment2/'pollution_data'/'by_src'/'src_agriculture'/'CH4.csv')
 
 def merge_parent_and_basename(path: str | Path) -> str:
     """This function merges the basename and the parent-name of a path into one, uniting them with "_" character.
@@ -267,13 +299,27 @@ def merge_parent_and_basename(path: str | Path) -> str:
     Returns:
         - new_base (str) : New basename of the path
     """
-    # Remove if you implement this task
-    raise NotImplementedError("Remove me if you implement this mandatory task")
 
+    if not isinstance(path, (Path, str)):
+        raise TypeError(f'Object "{path}" is not path. Expected a string or a Path.')
+    
+    path = Path(path)
+    
+    #see if there is a better way to do this ***
+    contents = list(path.parts)
+
+    if len(contents)<3:
+        raise ValueError('Expected a filename and a parent-name.')
+    
+
+    filename = path.name
+    parentname = path.parent.name
     # New, merged, basename of the path, which will be the new filename
-    new_base = ...
+    new_base = f'{parentname}_{filename}'
     return new_base
 
+runs = merge_parent_and_basename(assignment2/'pollution_data/by_src/src_agriculture/CH4.csv')
+print(runs)
 
 def delete_directories(path_list: List[str | Path]) -> None:
     """Prompt the user for permission and delete the objects pointed to by the paths in path_list if

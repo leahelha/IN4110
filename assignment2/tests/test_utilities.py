@@ -4,7 +4,6 @@
 
 # Include the necessary packages here
 from pathlib import Path
-
 import pytest
 
 # This should work if analytic_tools has been installed properly in your environment
@@ -54,7 +53,7 @@ def test_get_diagnostics(example_config):
 )
 
 
-
+#***    CHECK
 def test_get_diagnostics_exceptions(exception, dir):
     """Test the error handling of get_diagnostics function
 
@@ -79,8 +78,20 @@ def test_is_gas_csv():
         None
     """
     # Remove if you implement this task
-    raise NotImplementedError("Remove me if you implement this mandatory task")
-    ...
+    function = is_gas_csv('/pollution_data/by_src/src_agriculture/CH4.csv')
+    expected = True
+    assert function == expected
+    
+    function2 = is_gas_csv('N4110/ch4.csv')
+    expected2 = False
+    assert function2 == expected2
+
+    #here = Path(__file__).absolute()
+    function3 = is_gas_csv('H2.csv')
+    expected3 = True
+    assert function3 == expected3
+
+
 
 
 @pytest.mark.task22
@@ -88,6 +99,7 @@ def test_is_gas_csv():
     "exception, path",
     [
         (ValueError, Path(__file__).parent.absolute()),
+        (TypeError, 3),
         # add more combinations of (exception, path) here
     ],
 )
@@ -101,9 +113,9 @@ def test_is_gas_csv_exceptions(exception, path):
     Returns:
         None
     """
-    # Remove if you implement this task
-    raise NotImplementedError("Remove me if you implement this mandatory task")
-    ...
+
+    with pytest.raises(exception):
+        is_gas_csv(path)
 
 
 @pytest.mark.task24
@@ -117,9 +129,10 @@ def test_get_dest_dir_from_csv_file(example_config):
     Returns:
         None
     """
-    # Remove if you implement this task
-    raise NotImplementedError("Remove me if you implement this mandatory task")
-    ...
+   
+    function = get_dest_dir_from_csv_file(example_config, example_config/'pollution_data'/'by_src'/'src_agriculture'/'H2.csv')  
+    expected = example_config/'gas_H2'
+    assert function == expected
 
 
 @pytest.mark.task24
@@ -127,8 +140,12 @@ def test_get_dest_dir_from_csv_file(example_config):
     "exception, dest_parent, file_path",
     [
         (ValueError, Path(__file__).parent.absolute(), "foo.txt"),
+        (ValueError, Path(__file__).parent.absolute(), '/dirc'),
+        (NotADirectoryError, Path(__file__).parent.absolute()/"foo.txt", Path(__file__).parent.absolute()),
+        (TypeError, 5, 3),
         # add more combinations of (exception, dest_parent, file_path) here
     ],
+
 )
 def test_get_dest_dir_from_csv_file_exceptions(exception, dest_parent, file_path):
     """Test the error handling of get_dest_dir_from_csv_file function
@@ -141,9 +158,8 @@ def test_get_dest_dir_from_csv_file_exceptions(exception, dest_parent, file_path
     Returns:
         None
     """
-    # Remove if you implement this task
-    raise NotImplementedError("Remove me if you implement this mandatory task")
-    ...
+    with pytest.raises(exception):
+        get_dest_dir_from_csv_file(dest_parent, file_path)
 
 
 @pytest.mark.task26
@@ -156,9 +172,9 @@ def test_merge_parent_and_basename():
     Returns:
         None
     """
-    # Remove if you implement this task
-    raise NotImplementedError("Remove me if you implement this mandatory task")
-    ...
+    function = merge_parent_and_basename('assignment2/pollution_data/by_src/src_agriculture/CH4.csv')
+    expected = 'src_agriculture_CH4.csv'
+    assert function == expected
 
 
 @pytest.mark.task26
@@ -166,6 +182,8 @@ def test_merge_parent_and_basename():
     "exception, path",
     [
         (TypeError, 33),
+        (ValueError, '/src_agriculture/'),
+        (ValueError, 'CH4.csv/'),
         # add more combinations of (exception, path) here
     ],
 )
@@ -179,6 +197,6 @@ def test_merge_parent_and_basename_exceptions(exception, path):
     Returns:
         None
     """
-    # Remove if you implement this task
-    raise NotImplementedError("Remove me if you implement this mandatory task")
-    ...
+    with pytest.raises(exception):
+        merge_parent_and_basename(path)
+
