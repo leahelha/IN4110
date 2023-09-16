@@ -74,13 +74,6 @@ def get_diagnostics(dir: str | Path) -> Dict[str, int]:
 
     return res
 
-here = Path(__file__).parent.absolute()
-assignment2 = Path(here).parent.absolute()
-
-#res = get_diagnostics(assignment2/ 'pollution_data') #*** testing
-
-
-
 def display_diagnostics(dir: str | Path, contents: Dict[str, int]) -> None:
     """Display diagnostics for the directory tree, with root directory pointed to by dir.
         Objects to display: files, subdirectories, .csv files, .txt files, .npy files, .md files, other files.
@@ -131,8 +124,6 @@ def display_diagnostics(dir: str | Path, contents: Dict[str, int]) -> None:
     print('------------------------------------------------------------------------')
     return
 
-#test = display_diagnostics(assignment2/'pollution_data', res)
-
 def display_directory_tree(dir: str | Path, maxfiles: int = 3) -> None:
     """Display a directory tree, with root directory pointed to by dir.
        Limit the number of files to be displayed for convenience to maxfiles.
@@ -171,34 +162,29 @@ def display_directory_tree(dir: str | Path, maxfiles: int = 3) -> None:
     print('\n')
     print(f"{directory}/")
 
-    def directory_tree(directory, round = 0):
+    # Recursive function which traverses the directory and makes a tree structure of the directory
+    def directory_tree(directory, counter = 0):
         contents = directory.iterdir()
         nr_files = 0
 
         for path in contents:
             
-            if path.is_file() and nr_files==(maxfiles) and round>0:
+            if path.is_file() and nr_files==(maxfiles) and counter>0:
                 nr_files += 1
-                print(f"{'    '*round}...")
+                print(f"{'    '*counter}...")
 
             if path.is_file() and nr_files<=maxfiles:
                 nr_files += 1
-                #print(f"{'   '*round}file nr {nr_files}")
-                print(f"{'    '*round}- {path.name}")   
+                print(f"{'    '*counter}- {path.name}")   
 
             elif path.is_dir():
-                #print('\n')
-                print(f"{'    '*round}> {path.name}")  
-                count = round
+                print(f"{'    '*counter}> {path.name}")  
+                count = counter
                 
                 directory_tree(path, count+1)
 
     directory_tree = directory_tree(directory)
     return
-
-    
-#run = display_directory_tree(assignment2/'pollution_data', maxfiles=3)
-
 
 def is_gas_csv(path: str | Path) -> bool:
     """Checks if a csv file pointed to by path is an original gas statistics file.
@@ -231,8 +217,6 @@ def is_gas_csv(path: str | Path) -> bool:
         return True
     else:
         return False
-
-
 
 def get_dest_dir_from_csv_file(dest_parent: str | Path, file_path: str | Path) -> Path:
     """Given a file pointed to by file_path, derive the correct gas_[gas_formula] directory name.
@@ -287,8 +271,6 @@ def get_dest_dir_from_csv_file(dest_parent: str | Path, file_path: str | Path) -
         dest_path.mkdir()
         return dest_path
 
-#lets_try_it = get_dest_dir_from_csv_file(assignment2/'pollution_data_restructured'/'by_gas', assignment2/'pollution_data'/'by_src'/'src_agriculture'/'CH4.csv')
-
 def merge_parent_and_basename(path: str | Path) -> str:
     """This function merges the basename and the parent-name of a path into one, uniting them with "_" character.
        It then returns the basename of the resulting path.
@@ -318,9 +300,6 @@ def merge_parent_and_basename(path: str | Path) -> str:
     new_base = f'{parentname}_{filename}'
     return new_base
 
-runs = merge_parent_and_basename(assignment2/'pollution_data/by_src/src_agriculture/CH4.csv')
-print(runs)
-
 def delete_directories(path_list: List[str | Path]) -> None:
     """Prompt the user for permission and delete the objects pointed to by the paths in path_list if
        permission is given. If the object is a directory, its whole directory tree is removed.
@@ -332,7 +311,5 @@ def delete_directories(path_list: List[str | Path]) -> None:
     Returns:
     None
     """
-    # NOTE: This is an optional task, no points assigned. If you are skipping it, remove `raise NotImplementedError` in the function body
-    raise NotImplementedError("Remove me if you implement this optional task")
-
-    ...
+    # note: This is an optional task, no points assigned. If you are skipping it, remove `raise NotImplementedError` in the function body
+    
