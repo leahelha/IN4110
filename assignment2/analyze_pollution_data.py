@@ -5,6 +5,8 @@
 from pathlib import Path
 
 import shutil
+import tempfile
+
 from analytic_tools.utilities import get_diagnostics, display_diagnostics, display_directory_tree, is_gas_csv, get_dest_dir_from_csv_file, merge_parent_and_basename
 from analytic_tools.plotting import plot_pollution_data
 
@@ -125,7 +127,7 @@ def analyze_pollution_data(work_dir: str | Path) -> None:
 
     # Make a call to plot_pollution_data
     plot = plot_pollution_data(by_gas_dir, figures_dir)
-
+    
     return  
 
 
@@ -146,12 +148,41 @@ def analyze_pollution_data_tmp(work_dir: str | Path) -> None:
     - Perform the same operations as in analyze_pollution_data
     - Copy (or directly save) the figures to a directory named `figures` under the original working directory pointed to by `work_dir`
     """
+    # Error handling
+    if not isinstance(work_dir, (Path, str)):
+        raise TypeError(f'Object "{work_dir}" is not path. Expected a string or a Path.')
+    
+    work_dir = Path(work_dir)
 
-    # NOTE: This is a bonus task, if you are skipping it, remove `raise NotImplementedError()`
-    # in the function body
-    raise NotImplementedError("Remove me if you implement this optional task")
+    if not work_dir.is_dir() or not work_dir.exists():
+        raise NotADirectoryError(f'Directory "{work_dir}" does not exist, or is not the path to a directory.')
 
-    ...
+      # Create pollution_data_restructured in work_dir
+    pollution_dir = work_dir / "pollution_data"
+    restructured_dir = work_dir / "pollution_data_restructured"
+    
+    
+    # Make a call to display diagnostics
+    res = get_diagnostics(pollution_dir) 
+    disp_diagnostics = display_diagnostics(pollution_dir, res)
+    dis_directory_tree = display_directory_tree(pollution_dir, maxfiles=3)
+
+    # Populate assignment2 folder with a sub folder named figures
+    figures_dir = work_dir / "figures"
+    if not figures_dir.exists():
+        figures_dir.mkdir(parents=True)
+
+
+    # TEMPORARY by_gas directory inside a temporary pollution_data_restructured folder
+    with tempfile.TemporaryDirectory() as temp_by_gas_dir:
+        by_gas_dir = Path(temp_by_gas_dir)
+        
+        # Make a call to restructure_pollution_data
+        run = restructure_pollution_data(pollution_dir, by_gas_dir)
+        # Make a call to plot_pollution_data
+        plot = plot_pollution_data(by_gas_dir, figures_dir)
+
+    return  
 
 
 if __name__ == "__main__":
@@ -164,5 +195,4 @@ if __name__ == "__main__":
     analyze_pollution_data(work_dir)
 
 
-here = Path(__file__).parent.absolute()
-run = analyze_pollution_data(here)
+
