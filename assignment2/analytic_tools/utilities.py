@@ -281,21 +281,23 @@ def merge_parent_and_basename(path: str | Path) -> str:
     Returns:
         - new_base (str) : New basename of the path
     """
-
+    # Error handling
     if not isinstance(path, (Path, str)):
         raise TypeError(f'Object "{path}" is not path. Expected a string or a Path.')
     
     path = Path(path)
     
-    #see if there is a better way to do this ***
+    
     contents = list(path.parts)
 
+    # If the path input is f.ex only "/folder", it has a len = 2 and we dont have filename AND a parent-name
     if len(contents)<3:
         raise ValueError('Expected a filename and a parent-name.')
     
 
     filename = path.name
     parentname = path.parent.name
+
     # New, merged, basename of the path, which will be the new filename
     new_base = f'{parentname}_{filename}'
     return new_base

@@ -46,14 +46,15 @@ def test_get_diagnostics(example_config):
 @pytest.mark.parametrize(
     "exception, dir",
     [
-        (NotADirectoryError, "Not_a_real_directory"),
+        (NotADirectoryError, "/Not_a_real_directory"),
+        (NotADirectoryError, "/Not_a_real_directory.csv"),
         (TypeError, 3),
         # add more combinations of (exception, dir) here
     ],
 )
 
 
-#***    CHECK
+
 def test_get_diagnostics_exceptions(exception, dir):
     """Test the error handling of get_diagnostics function
 
