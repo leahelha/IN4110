@@ -256,9 +256,10 @@ def get_dest_dir_from_csv_file(dest_parent: str | Path, file_path: str | Path) -
     filename = str(file_path.name)
 
     # Derive the name of the directory, pattern: gas_[gas_formula] directory
+
+    # This is the name of the gas
     dest_name = filename[:-4]
     
-
     parent = Path(dest_parent)
    
     # Derive its absolute path
@@ -290,7 +291,7 @@ def merge_parent_and_basename(path: str | Path) -> str:
     
     contents = list(path.parts)
 
-    # If the path input is f.ex only "/folder", it has a len = 2 and we dont have filename AND a parent-name
+    # If the path input is f.ex "/folder", it has a len = 2 and we dont have filename AND a parent-name
     if len(contents)<3:
         raise ValueError('Expected a filename and a parent-name.')
     
