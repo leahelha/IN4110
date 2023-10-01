@@ -19,20 +19,17 @@ def python_color2gray(image: np.array) -> np.array:
 
     gray_image = np.empty_like(image) #(H W C)
     
-    # iterate through the pixels, and apply the grayscale transform
-    #print((gray_image))
-    w, h = image.size # The width and height of the image
-    w, h, c = np.shape(gray_image)
+    # iterate through the pixels, and apply the grayscale transform    
+    w, h, c = np.shape(image)
 
     for i in range(w):
         for j in range(h):
             #for k in range(c):
             # Separate RGB values from image
-            print(gray_image[i, j, :])
-            r, g, b = gray_image[i, j, :]
+            r, g, b = image[i, j, :]
 
             # Make image gray, and save in gray_image
-            gray = (0.21*r + 0.72*g + 0.07*b)
+            gray = 0.21*r + 0.72*g + 0.07*b
             
             gray_image[i,j, :] = gray
 
@@ -43,19 +40,14 @@ def python_color2gray(image: np.array) -> np.array:
     image = Image.fromarray(grayscale_array)
     image.save("rain_grayscale.jpg")
 
-    run = io.write_image(grayscale_array, "rain_grayscale.jpg")
-
-
-    return gray_image
-
-
+    return grayscale_array
 
 
 im = Image.open("/Users/lh/Documents/Uni/IN4110/IN3110-leaheh/assignment3/test/rain.jpg")
 resized = im.resize((im.width // 2, im.height // 2))
 pixels = np.asarray(resized)
 
-run = python_color2gray(im)
+run = python_color2gray(pixels)
 
 def python_color2sepia(image: np.array) -> np.array:
     """Convert rgb pixel array to sepia
