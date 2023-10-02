@@ -55,7 +55,7 @@ def numpy_color2gray(image: np.array) -> np.array:
 
     return gray_image
 
-
+# *** DELETE LATER
 im = Image.open("/Users/lh/Documents/Uni/IN4110/IN3110-leaheh/assignment3/test/rain.jpg")
 resized = im.resize((im.width // 2, im.height // 2))
 pixels = np.asarray(resized)

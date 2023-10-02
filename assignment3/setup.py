@@ -9,13 +9,14 @@ use_cython = True
 if use_cython:
     from Cython.Build import cythonize
     from setuptools import Extension
+    import numpy as np
 
     extensions = [
         # A single module that is stand alone and has no special requisites
         Extension(
             "in3110_instapy.cython_filters",
             ["in3110_instapy/cython_filters.py"],
-            #include_dirs=[np.get_include()],
+            include_dirs=[np.get_include()],
             # enable profiling
 
             define_macros=[
