@@ -2,7 +2,7 @@
 requires = [
     "setuptools>=61",
     # 4110 only:
-    # "cython>=3",
+    "cython>=3",
 ]
 build-backend = "setuptools.build_meta"
 
@@ -17,13 +17,11 @@ dependencies = [
     "numpy",
     "numba",
     "pillow",
-    "line-profiler"
+    "line-profiler",
+    "cython",
 ]
 
 
 [project.scripts]
 in3110_instapy = "instapy.cli:main"
 
-#["./in3110_instapy/__init__.py", "./in3110_instapy/__main__.py", "./in3110_instapy/cli.py", "./in3110_instapy/cython_filters.py", "./in3110_instapy/io.py", "./in3110_instapy/numba_filters.py", "./in3110_instapy/numpy_filters.py", "./in3110_instapy/profiling.py", "./in3110_instapy/python_filters.py", "./in3110_instapy/timing.py"]
-
-#["package-dir:in3110_instapy"]

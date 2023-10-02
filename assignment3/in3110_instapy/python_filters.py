@@ -19,28 +19,24 @@ def python_color2gray(image: np.array) -> np.array:
 
     gray_image = np.empty_like(image) #(H W C)
     
-    # iterate through the pixels, and apply the grayscale transform    
-    w, h, c = np.shape(image)
+    # iterate through the pixels, and apply the grayscale transform   
+    # Separating the image dimensions into height width and color 
+    h, w, c = np.shape(image)
 
-    for i in range(w):
-        for j in range(h):
-            #for k in range(c):
-            # Separate RGB values from image
-            r, g, b = image[i, j, :]
-
-            # Make image gray, and save in gray_image
-            gray = 0.21*r + 0.72*g + 0.07*b
-            
-            gray_image[i,j, :] = gray
+    for i in range(h):
+        for j in range(w):
+            # # Make image gray, and save in gray_image  
+            gray_image[i,j] = image[i,j,0]*0.21 + image[i,j,1]*0.72 + image[i,j,2]*0.07
 
     
-    grayscale_array = gray_image.astype("uint8")
+    gray_image = gray_image.astype("uint8")
 
+    # *** DELETE LATER
     
-    image = Image.fromarray(grayscale_array)
+    image = Image.fromarray(gray_image)
     image.save("rain_grayscale.jpg")
 
-    return grayscale_array
+    return gray_image
 
 
 im = Image.open("/Users/lh/Documents/Uni/IN4110/IN3110-leaheh/assignment3/test/rain.jpg")

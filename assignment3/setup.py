@@ -1,7 +1,9 @@
 from setuptools import setup
+from Cython.Build import cythonize #*** new
+#import numpy as np
 
 # IN4110: set to True when you are ready for the Cython implementation
-use_cython = False
+use_cython = True
 
 
 if use_cython:
@@ -13,7 +15,9 @@ if use_cython:
         Extension(
             "in3110_instapy.cython_filters",
             ["in3110_instapy/cython_filters.py"],
+            #include_dirs=[np.get_include()],
             # enable profiling
+
             define_macros=[
                 ("CYTHON_TRACE", "1"),
                 ("CYTHON_TRACE_NOGIL", "1"),

@@ -2,7 +2,31 @@
 from __future__ import annotations
 
 import numpy as np
+from PIL import Image
+"""
+  gray_image = np.empty_like(image) #(H W C)
+    
+    # iterate through the pixels, and apply the grayscale transform    
+    h, w, c = np.shape(image)
 
+    for i in range(h):
+        for j in range(w):
+            #for k in range(c):
+            # Separate RGB values from image
+            r, g, b = image[i, j, :]
+
+            # Make image gray, and save in gray_image
+            gray = 0.21*r + 0.72*g + 0.07*b
+            
+            gray_image[i,j, :] = gray
+
+    
+    grayscale_array = gray_image.astype("uint8")
+
+    
+    image = Image.fromarray(grayscale_array)
+    image.save("rain_grayscale.jpg")
+"""
 
 def numpy_color2gray(image: np.array) -> np.array:
     """Convert rgb pixel array to grayscale
@@ -15,11 +39,28 @@ def numpy_color2gray(image: np.array) -> np.array:
 
     gray_image = np.empty_like(image)
 
+    # Converting the original image to grayscale
+    gray_convert = np.dot(image[:,:,:3],[0.21, 0.72, 0.07])
+
+    gray_image = gray_convert
+    
     # Hint: use numpy slicing in order to have fast vectorized code
-    ...
+    
     # Return image (make sure it's the right type!)
+    gray_image = gray_image.astype("uint8")
+
+    # *** DELETE LATER
+    image = Image.fromarray(gray_image)
+    image.save("rain_grayscale.jpg")
+
     return gray_image
 
+
+im = Image.open("/Users/lh/Documents/Uni/IN4110/IN3110-leaheh/assignment3/test/rain.jpg")
+resized = im.resize((im.width // 2, im.height // 2))
+pixels = np.asarray(resized)
+
+run = numpy_color2gray(pixels)
 
 def numpy_color2sepia(image: np.array, k: float = 1) -> np.array:
     """Convert rgb pixel array to sepia
