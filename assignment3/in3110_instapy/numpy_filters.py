@@ -49,18 +49,13 @@ def numpy_color2gray(image: np.array) -> np.array:
     # Return image (make sure it's the right type!)
     gray_image = gray_image.astype("uint8")
 
-    # *** DELETE LATER
-    image = Image.fromarray(gray_image)
-    image.save("rain_grayscale.jpg")
+    # # *** DELETE LATER
+    # image = Image.fromarray(gray_image)
+    # image.save("rain_grayscale.jpg")
 
     return gray_image
 
-# *** DELETE LATER
-im = Image.open("/Users/lh/Documents/Uni/IN4110/IN3110-leaheh/assignment3/test/rain.jpg")
-resized = im.resize((im.width // 2, im.height // 2))
-pixels = np.asarray(resized)
 
-run = numpy_color2gray(pixels)
 
 def numpy_color2sepia(image: np.array, k: float = 1) -> np.array:
     """Convert rgb pixel array to sepia
@@ -83,18 +78,35 @@ def numpy_color2sepia(image: np.array, k: float = 1) -> np.array:
         # validate k (optional)
         raise ValueError(f"k must be between [0-1], got {k=}")
 
-    sepia_image = ...
+    sepia_image = np.empty_like(image)
+    h, w, c = np.shape(image)
 
     # define sepia matrix (optional: with stepless sepia changes)
-    sepia_matrix = ...
+    sepia_matrix = np.array([
+                    [ 0.393, 0.769, 0.189],
+                    [ 0.349, 0.686, 0.168],
+                    [ 0.272, 0.534, 0.131],])
 
     # HINT: For version without adaptive sepia filter, use the same matrix as in the pure python implementation
     # use Einstein sum to apply pixel transform matrix
+
+
     # Apply the matrix filter
-    sepia_image = ...
+    for i in range(h):
+        for j in range(w):
+            for k in range(c):
+                sepia = np.dot(image[i,j,:],sepia_matrix[k])
+                sepia_image[i,j,k] = min(255, sepia)
 
     # Check which entries have a value greater than 255 and set it to 255 since we can not display values bigger than 255
     ...
 
     # Return image (make sure it's the right type!)
+    sepia_image = sepia_image.astype("uint8")
     return sepia_image
+
+   # *** DELETE LATER
+# im = Image.open("/Users/lh/Documents/Uni/IN4110/IN3110-leaheh/assignment3/test/rain.jpg")
+# resized = im.resize((im.width // 2, im.height // 2))
+# pixels = np.asarray(resized)
+

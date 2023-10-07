@@ -2,8 +2,12 @@ from __future__ import annotations
 
 import time
 from typing import Callable
-
-from . import get_filter, io
+from PIL import Image
+# from . import get_filter, io
+import timeit
+import numpy as np
+import in3110_instapy
+from in3110_instapy import python_filters, numba_filters, cython_filters, numpy_filters
 
 
 def time_one(filter_function: Callable, *arguments, calls: int = 3) -> float:
@@ -25,8 +29,14 @@ def time_one(filter_function: Callable, *arguments, calls: int = 3) -> float:
             The average time (in seconds) to run filter_function(*arguments)
     """
     # run the filter function `calls` times
+    call = lambda: filter_function(*arguments)
     # return the _average_ time of one call
-    ...
+    avg_time = timeit.timeit(call, number=calls)/calls
+    
+    return avg_time
+
+
+
 
 
 def make_reports(filename: str = "test/rain.jpg", calls: int = 3):
@@ -39,27 +49,31 @@ def make_reports(filename: str = "test/rain.jpg", calls: int = 3):
     """
 
     # load the image
-    image = ...
+    image = Image.open(filename)
+    im_array = np.asarray(image)
     # iterate through the filters
-    filter_names = ...
+    filter_names = ["_color2gray", "_color2sepia"] #python, numpy, numba, cython
+    K = 3  # number of calls
+
     for filter_name in filter_names:
         # get the reference filter function
-        reference_filter = ...
+        reference_filter = python_filters.python_color2gray #...
         # time the reference implementation
-        reference_time = ...
+        reference_time = time_one(reference_filter, im_array, calls = K)
+        
         print(
             f"Reference (pure Python) filter time {filter_name}: {reference_time:.3}s ({calls=})"
         )
         # iterate through the implementations
-        implementations = ...
+        implementations = [ "cython", "numba", "numpy"]
         for implementation in implementations:
-            filter = ...
+            filter = getattr(getattr(in3110_instapy, implementation+"_filters"), implementation+filter_name)#float(implementation)
             # time the filter
-            filter_time = ...
+            filter_time = time_one(filter, im_array, calls = K)
             # compare the reference time to the optimized time
-            speedup = ...
+            speedup = reference_time/filter_time
             print(
-                f"Timing: {implementation} {filter_name}: {filter_time:.3}s ({speedup=:.2f}x)"
+                f"Timing: {implementation}{filter_name}: {filter_time:.3}s ({speedup=:.2f}x)"
             )
 
 

@@ -1,6 +1,4 @@
 from setuptools import setup
-from Cython.Build import cythonize #*** new
-#import numpy as np
 
 # IN4110: set to True when you are ready for the Cython implementation
 use_cython = True
