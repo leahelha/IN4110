@@ -9,11 +9,9 @@ just 1-2 sentences each.
 
 > which profiler produced the most useful output, and why?
 
-The cProfile profiler appears to have been the most successful profiler, as it provided detailed information about the function calls, cumulative time, and per-call time.
-Additionally, line_profiler couldn't give any output for the numba or cython implementations (this could be due to improper implementation on my part), making cProfiler the winner.
+The cProfile profiler appears to have been the most useful profiler, as it provided detailed information about the function calls, cumulative time, and per-call time and didn't fail.
+Line_profiler couldn't give any output for the numba or cython implementations (this could be due to improper implementation on my part), making cProfiler the winner.
 
-However, I found line_profiler to be more readable and user friendly and it would have been the most useful if it didn't fail for numba and cython.
--> This makes cProfile is the most useful.
 
 
 
@@ -28,9 +26,8 @@ cProfile showed a breakdown of the function calls, cumulative time, and per-call
 
 > Do any profiler+implementations produce seem to not work at all? If so, which?
 
-Neither profilers seemed to be perfect. cProfiler was a bit messy, and gave a lot of empty values which I think is an indication that it didn't completly work. 
 Both profilers seemed to struggle with the numba and the cython implementation, particulary line_profiler which got an AttributeError for the cython_color2gray filter.
-Line_profiler never got to the sepia filters as it recieved an error message for the first cython filter. It appears to be looking for a .pyx file, which doesn't exist, and I don't know how to solve this.
+Line_profiler never got to the sepia filters as it recieved an error message for the first cython filter, it failed at numba and cython.
 
 ## profile output
 

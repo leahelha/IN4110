@@ -14,7 +14,7 @@
             ]
         ],
         "include_dirs": [
-            "/private/var/folders/z6/2n7lb27n74x4s4kbqcrws5_h0000gn/T/pip-build-env-7moyu3i_/overlay/lib/python3.10/site-packages/numpy/core/include"
+            "/private/var/folders/z6/2n7lb27n74x4s4kbqcrws5_h0000gn/T/pip-build-env-1oxldsg3/overlay/lib/python3.10/site-packages/numpy/core/include"
         ],
         "name": "in3110_instapy.cython_filters",
         "sources": [
@@ -1618,14 +1618,14 @@ typedef struct {
  * 
  * # we may need a 'const uint8_t' type to make sure we accept 'read-only' arrays
  * const_uint8_t = C.typedef("const uint8_t")             # <<<<<<<<<<<<<<
- * #const_uint8_t_3d = np.array('uint8_t', 3)#uint8_t[:, :, :]
+ * 
  * float64_t = C.typedef(C.double)
  */
 typedef uint8_t const __pyx_t_14in3110_instapy_14cython_filters_const_uint8_t;
 
 /* "in3110_instapy/cython_filters.py":23
  * const_uint8_t = C.typedef("const uint8_t")
- * #const_uint8_t_3d = np.array('uint8_t', 3)#uint8_t[:, :, :]
+ * 
  * float64_t = C.typedef(C.double)             # <<<<<<<<<<<<<<
  * 
  * 
