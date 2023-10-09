@@ -19,7 +19,7 @@ from cython.cimports.libc.stdint import uint8_t  # noqa
 
 # we may need a 'const uint8_t' type to make sure we accept 'read-only' arrays
 const_uint8_t = C.typedef("const uint8_t")
-#const_uint8_t_3d = np.array('uint8_t', 3)#uint8_t[:, :, :]
+
 float64_t = C.typedef(C.double)
 
 
@@ -56,20 +56,20 @@ def cython_color2gray(image: C.npy_uint8[:,:,:])->C.npy_uint8[:,:,:]:
 
 
 
-def cython_color2sepia(image):
+def cython_color2sepia(image: C.npy_uint8[:,:,:])->C.npy_uint8[:,:,:]:
     """Convert rgb pixel array to sepia
 
     Args:
         image (np.array)
     Returns:
-        np.array: sepia_image
+        np.array: sepia_image_arr
     """
-    sepia_image: C.double[:,:,:] = np.empty_like(image)
-
+    
     h: C.int = np.shape(image)[0]
     w: C.int = np.shape(image)[1]
     c: C.int = np.shape(image)[2]
 
+    sepia_image: C.double[:,:,:] = np.zeros((h,w,c))
    
     # applying the sepia matrix
     sepia_matrix = [[ 0.393, 0.769, 0.189],[ 0.349, 0.686, 0.168],[ 0.272, 0.534, 0.131]]
@@ -85,12 +85,12 @@ def cython_color2sepia(image):
                 g: C.double = image[i, j, 1]
                 b: C.double = image[i, j, 2]
 
-                sepia =  image[i, j, 0] * sepia_matrix[k, 0] + image[i, j, 1] * sepia_matrix[k, 1] + image[i, j, 2] * sepia_matrix[k, 2]#r*sepia_matrix[k, 0]+ g*sepia_matrix[k, 1]+ b*sepia_matrix[k, 2]
+                sepia =  image[i, j, 0] * sepia_matrix[k][0] + image[i, j, 1] * sepia_matrix[k][1] + image[i, j, 2] * sepia_matrix[k][2]#r*sepia_matrix[k, 0]+ g*sepia_matrix[k, 1]+ b*sepia_matrix[k, 2]
                 sepia_image[i, j, k] = min(255, sepia)
 
     # # Return image
     
     # # don't forget to make sure it's the right type!
-    sepia_image = sepia_image.astype("uint8")
+    sepia_image_arr: C.npy_uint8[:,:,:] = np.array(sepia_image).astype("uint8")
 
-    return sepia_image
+    return sepia_image_arr

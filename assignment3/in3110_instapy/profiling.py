@@ -1,15 +1,15 @@
+from __future__ import annotations
 """
 Profiling (IN4110 only)
 """
-from __future__ import annotations
-
 import cProfile
 import pstats
 
 import in3110_instapy
 import line_profiler
-
-from . import io
+import numpy as np
+#from in3110_instapy import python_filters, numba_filters, cython_filters, numpy_filters
+from in3110_instapy.io import random_image
 
 
 def profile_with_cprofile(filter, image, ncalls=3):
@@ -23,14 +23,26 @@ def profile_with_cprofile(filter, image, ncalls=3):
         image (ndarray): image to filter
         ncalls (int): number of repetitions to measure
     """
+    
     profiler = cProfile.Profile()
     # run `filter(image)` in the profiler
-    ...
-    stats = pstats.Stats(profiler)
+
+    profiler.enable()
+    for i in range(ncalls):
+        filter(image)
+    profiler.disable()
+        
+    
+    
     # print the top 10 results, sorted by cumulative time
     # (check sort_stats and print_stats docstrings)
-    ...
+    stats = pstats.Stats(profiler)
+    stats.strip_dirs()
+    stats.sort_stats('cumulative')
+    stats.print_stats(10)
 
+
+  
 
 def profile_with_line_profiler(filter, image, ncalls=3):
     """Profile filter(image) with line_profiler
@@ -47,11 +59,14 @@ def profile_with_line_profiler(filter, image, ncalls=3):
     profiler = line_profiler.LineProfiler()
     # tell it to measure the function we are given
     profiler.add_function(filter)
-    # Measure filter(image)
-    ...
-    # print statistics
-    ...
 
+    # Measure filter(image)
+    for i in range(ncalls):
+        profiler(filter)(image)
+       
+    
+    # print statistics
+    profiler.print_stats()
 
 def run_profiles(profiler: str = "cprofile"):
     """Run profiles of every implementation
@@ -60,32 +75,40 @@ def run_profiles(profiler: str = "cprofile"):
 
         profiler (str): either 'line_profiler' or 'cprofile'
     """
-    # Select which profile function to use
-    if profiler == "line_profiler":
-        profile_func = ...
-    elif profiler.lower() == "cprofile":
-        profile_func = ...
+    if profiler == "cprofile":
+        profile_func = profile_with_cprofile #profile_with_cprofile(filter, image)
+    elif profiler == "line_profiler":
+        profile_func = profile_with_line_profiler #profile_with_line_profiler(filter, image)
     else:
         raise ValueError(f"{profiler=} must be 'line_profiler' or 'cprofile'")
-
+    
+    
     # construct a random 640x480 image
-    image = ...
+    image = np.random.randint(0, 255, size=(640, 480, 3), dtype=np.uint8)#random_image(640, 480)
 
-    filter_names = ...
-    implementations = ...
+    filter_names = ["color2gray", "color2sepia"]  
+    implementations = ["python", "numpy", "numba", "cython"] 
+
     for filter_name in filter_names:
         for implementation in implementations:
             print(f"Profiling {implementation} {filter_name} with {profiler}:")
-            filter = in3110_instapy.get_filter(filter_name, implementation)  #
+            filter = in3110_instapy.get_filter(filter_name, implementation) #getattr(getattr(in3110_instapy, implementation+"_filters"), implementation+'_'+filter_name)
+
             # call it once
             filter(image)
             profile_func(filter, image)
+            
 
-
-if __name__ == "__main__":
+                    
+            
+def main():
     print("Begin cProfile")
     run_profiles("cprofile")
     print("End cProfile")
+    print('\n')
     print("Begin line_profiler")
     run_profiles("line_profiler")
     print("End line_profiler")
+
+if __name__ == "__main__":
+    main()

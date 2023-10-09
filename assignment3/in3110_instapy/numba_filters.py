@@ -52,8 +52,6 @@ def numba_color2sepia(image: np.array) -> np.array:
                     [ 0.349, 0.686, 0.168],
                     [ 0.272, 0.534, 0.131],]
 
-    # print(sepia_matrix[0][2])
-    # print(image[0][0])
 
     #Iterate through the pixels
     for i in range(h):

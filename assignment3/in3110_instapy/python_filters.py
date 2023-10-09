@@ -55,12 +55,11 @@ def python_color2sepia(image: np.array) -> np.array:
                     [ 0.349, 0.686, 0.168],
                     [ 0.272, 0.534, 0.131],]
 
-    
-    print(f"THE IMAGE RUNNING IS {image[0,0,0]}")
+
 
     #Iterate through the pixels
-    for i in range(2):
-        for j in range(2):
+    for i in range(h):
+        for j in range(w):
                  for k in range(c):
                     r, g, b = image[i, j, :]
                     sepia = r*sepia_matrix[k][0]+g*sepia_matrix[k][1]+b*sepia_matrix[k][2]
@@ -74,22 +73,8 @@ def python_color2sepia(image: np.array) -> np.array:
     
     # # don't forget to make sure it's the right type!
     sepia_image = sepia_image.astype("uint8")
-    print(f"THE SEPIA RUNNING IS {sepia_image[0,0,0]}")
-    # *** DELETE LATER
-    #image = Image.fromarray(sepia_image)
-    #image.save("rain_grayscale.jpg")
-   
-    # print(image[0,0,0]==sepia_image[0,0,0])
-    # test = min(255, image[0,0,0]*sepia_matrix[0][0]+ image[0,0,1]*sepia_matrix[0][1]+ image[0,0,2]*sepia_matrix[0][2])
-    # print(np.allclose(sepia_image[0,0,0],test, atol=1))
-    # print(test)
+
     return sepia_image
 
- # *** DELETE LATER
-im = Image.open("/Users/lh/Documents/Uni/IN4110/IN3110-leaheh/assignment3/test/rain.jpg")
-resized = im.resize((im.width // 2, im.height // 2))
-pixels = np.asarray(im)
 
-run = python_color2sepia(pixels)
 
-print(run[0,0,0])

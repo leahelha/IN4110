@@ -5,6 +5,22 @@ import numpy as np
 
 
 def test_color2gray(image, reference_gray):
+    """Test function for color2gray in numba implementation
+
+    We check that the output image of the numba color2gray is the same shape
+    as the python color2gray.
+
+    We check that the output image is of type uint8.
+
+    We chech that the filter is applying as it should by comparing some pixels in the output filtered image
+    with the reference python image.
+
+    Args:
+        image  (ndarray): the input image that will run in numba_color2gray
+        reference_gray  (ndarray): the output from the python_color2gray
+    Returns:
+        None
+    """    
 
     gray_image = numba_color2gray(image)
     
@@ -22,6 +38,22 @@ def test_color2gray(image, reference_gray):
 
 
 def test_color2sepia(image, reference_sepia):
+    """Test function for color2sepia in numba implementation
+
+    We check that the output image of the numba color2sepia is the same shape
+    as the python color2sepia.
+
+    We check that the output image is of type uint8.
+
+    We chech that the filter is applying as it should by comparing some pixels in the output filtered image
+    with the reference python image.
+
+    Args:
+        image (ndarray): the input image that will run in numba_color2sepia
+        reference_sepia (ndarray): the output from the python_color2sepia
+    Returns:
+        None
+    """   
 
     sepia_image = numba_color2sepia(image)
     

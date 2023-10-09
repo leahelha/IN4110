@@ -3,7 +3,7 @@ from __future__ import annotations
 import time
 from typing import Callable
 from PIL import Image
-# from . import get_filter, io
+#from . import get_filter, io
 import timeit
 import numpy as np
 import in3110_instapy
@@ -68,6 +68,7 @@ def make_reports(filename: str = "test/rain.jpg", calls: int = 3):
         implementations = [ "cython", "numba", "numpy"]
         for implementation in implementations:
             filter = getattr(getattr(in3110_instapy, implementation+"_filters"), implementation+filter_name)#float(implementation)
+            print(filter)
             # time the filter
             filter_time = time_one(filter, im_array, calls = K)
             # compare the reference time to the optimized time

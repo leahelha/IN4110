@@ -3,6 +3,20 @@ import numpy as np
 
 
 def test_color2gray(image):
+    """Test function for color2gray in python implementation
+
+    We check that the output image of the python color2gray is the same shape
+    as the input image.
+
+    We check that the output image is of type uint8.
+
+    We chech that the filter is applying as it should by checking that all the pixels are uniform.
+
+    Args:
+        image (ndarray): the input image that will run in color2gray
+    Returns:
+        None
+    """ 
     # run color2gray
     gray_image = python_color2gray(image)
 
@@ -15,6 +29,21 @@ def test_color2gray(image):
 
 
 def test_color2sepia(image):
+    """Test function for color2sepia in python implementation
+
+    We check that the output image of the python color2gray is the same shape
+    as the input image.
+
+    We check that the output image is of type uint8.
+
+    We chech that the filter is applying as it should by checking some of the pixels.
+    We check by applying the filter in the test function to the same pixels and compare it with the function python_color2sepia.
+
+    Args:
+        image (ndarray): the input image that will run in python_color2sepia
+    Returns:
+        None
+    """
     # run color2sepia
     im = image
     sepia_image = python_color2sepia(im)
