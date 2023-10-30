@@ -78,7 +78,7 @@ def test_is_gas_csv():
     Returns:
         None
     """
-    # Remove if you implement this task
+    
     function = is_gas_csv('/pollution_data/by_src/src_agriculture/CH4.csv')
     expected = True
     assert function == expected
@@ -87,7 +87,7 @@ def test_is_gas_csv():
     expected2 = False
     assert function2 == expected2
 
-    #here = Path(__file__).absolute()
+    
     function3 = is_gas_csv('H2.csv')
     expected3 = True
     assert function3 == expected3
@@ -101,7 +101,7 @@ def test_is_gas_csv():
     [
         (ValueError, Path(__file__).parent.absolute()),
         (TypeError, 3),
-        # add more combinations of (exception, path) here
+        
     ],
 )
 def test_is_gas_csv_exceptions(exception, path):
@@ -144,7 +144,7 @@ def test_get_dest_dir_from_csv_file(example_config):
         (ValueError, Path(__file__).parent.absolute(), '/dirc'),
         (NotADirectoryError, Path(__file__).parent.absolute()/"foo.txt", Path(__file__).parent.absolute()),
         (TypeError, 5, 3),
-        # add more combinations of (exception, dest_parent, file_path) here
+        
     ],
 
 )
