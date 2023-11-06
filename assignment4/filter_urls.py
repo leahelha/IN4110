@@ -107,7 +107,8 @@ def find_articles(html: str, output: str | None = None) -> set[str]:
     return articles
 
 
-## Regex example
+# Regex example
+
 def find_img_src(html: str):
     """Find all src attributes of img tags in an HTML string
 

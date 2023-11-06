@@ -9,9 +9,11 @@ from pathlib import Path
 
 import pandas as pd
 
+import os
 import re
 from bs4 import BeautifulSoup
 from filter_urls import find_urls, find_articles
+from requesting_urls import get_html
 
 # Month names to submit for, from Wikipedia:Selected anniversaries namespace
 months_in_namespace = [
@@ -60,7 +62,7 @@ def extract_anniversaries(html: str, month: str) -> list[str]:
 
     # Filter the passages to keep only the highlighted anniversaries
     ann_list = []
-
+    
     # Find special anniversaries through finding the ones with links
     pattern = rf'<p>.*?<a href="/wiki/{month}_(\d+)".*?title="{month} \1">{month} \1'
     
@@ -68,30 +70,18 @@ def extract_anniversaries(html: str, month: str) -> list[str]:
     for paragraph in paragraphs:
         text = paragraph.get_text()
         match = re.search(pattern, str(paragraph), flags=re.IGNORECASE)
-       
-        if match and len(text.split())<3:
-            ann_list.append(text.strip())
+        
+        if match:
+            # print(text)
+            parts = re.split(rf"(?<={month})", text)
+            # print('parts')
+            # print(parts)
+            if len(parts[0])<10:
+                ann_list.append(text.strip())
     
 
-    print(ann_list)
+    # print(f'LIST: {ann_list}')
     return ann_list
-
-if __name__ == "__main__":
-    # Test code
-    text = """
-            <p></p>
-            <p>Nothing about a month here</p>
-            <p>October 3:</p>
-            <p><a href="/wiki/October_1" title="October 1">October 1</a></p>
-            <p><b><a href="/wiki/October_19" title="October 19">October 19</a></b></p>
-            <p>Text that should not be there<b><a href="/wiki/October_10" title="October 10">October 10</a></b></p>
-            <p><a href="October_29" title="October 29">October 29</a></p>
-            <table>
-            </table>
-    """
-    ann = extract_anniversaries(text, 'October')
-    sol = ["October 1", "October 19"]
-    print(sol)
 
 
 
@@ -117,7 +107,6 @@ def anniversary_list_to_df(ann_list: list[str]) -> pd.DataFrame:
 
     # Iterate through each entry in the anniversary list
     for ann in ann_list:
-        
         #print(f'Anniversary is {ann}')
 
         # Splitting the string into date and event parts
@@ -147,20 +136,7 @@ def anniversary_list_to_df(ann_list: list[str]) -> pd.DataFrame:
     return df
 
 
-if __name__ == "__main__":
-    # Test code
-    sample_list = [
-    "May 19: The creator has birthday! ; Beautiful day\n",
-    "December 1: just a beautiful day (always?); Winter is coming (No daylight past 15:00)",
-    "November 2: ",
-    "October 1",
-    "June 3: Another beautiful day; hmmm, (1999)\n",
-    "May 3: Just an exuse to put ugly character in test 35$56781-dg///c.*@",
-]
-    res_df = anniversary_list_to_df(sample_list)
 
-    print(res_df)
-    
 
 def anniversary_table(
     namespace_url: str, month_list: list[str], work_dir: str | Path
@@ -176,7 +152,8 @@ def anniversary_table(
     Returns:
         None
     """
-    raise NotImplementedError("remove me to begin task")
+    
+    #print(f'NAME SPACE URL {namespace_url} \n')
 
     # Loop through all months in month_list
     # Extract the html from the url (use one of the already defined functions from earlier)
@@ -186,87 +163,71 @@ def anniversary_table(
     # Save as markdown table
 
     work_dir = Path(work_dir)
-    output_dir = work_dir / "tables_of_anniversaries"
+    output_dir = work_dir/"tables_of_anniversaries"
+
+    # Create the directory if it doesn't exist
+    output_dir.mkdir(parents=True, exist_ok=True) 
 
     for month in month_list:
-        page_url = ...
-        html = ...
+        #print(month)
+        page_url = f"{namespace_url}{month}"
+        html = get_html(page_url)
+        
         # Get the list of anniversaries
-        ann_list = ...
+        ann_list = extract_anniversaries(html, str(month))
+        #print(ann_list)
 
         # Render to a dataframe
-        df = ...
+        df = anniversary_list_to_df(ann_list)
+        #print(df)
 
         # Convert to an .md table
-        table = ...
-
+        table = df.to_markdown(index=False)
+        
         # Save the output
-        ...
+        output_file = output_dir/f"anniversaries_{month.lower()}.md"
+        with open(output_file, 'w') as outfile:
+            outfile.write(table)
 
 
 if __name__ == "__main__":
     # make tables for all the months
-    work_dir = ...
+    work_dir = Path(__file__).parent.absolute()
     namespace_url = "https://en.wikipedia.org/wiki/Wikipedia:Selected_anniversaries/"
-    ...
+    test = anniversary_table(namespace_url, months_in_namespace, work_dir)
 
 
 
- #pattern = rf'<p><.*?/wiki/{month}_\d+" title="{month} \d{1,2}">{month} \d{1,2}</a>'
-    #pattern = rf'<a href="/wiki/{month}_{day}" title="{month} {day}">{month} {day}</a>'
-
-    # pattern = rf'<p><.*?/wiki/{month}_\d+" title="{month} \d{1,2}">{month} \d{1,2}</a>'
-    
-    # pattern = rf'<p><[a-zA-Z0-9=":;\s]*\bhref="/wiki/{month}_\d+".*?>{month}\b'
-
-
-
-
-            
-
-    # for paragraph in paragraphs:
-    #     text = paragraph.get_text()
-    #     #print(text.strip())
-    #     text_list.append(text.strip())
-
-    # for article in articles:
-    #     for text in text_list:
-    #         if month in article:
-    #             print(article)
-        
-    #         #ann_list.append(text.strip())
+if __name__ == "__main__":
+    # Test code
+    text = """
+            <p></p>
+            <p>Nothing about a month here</p>
+            <p>October 3:</p>
+            <p><a href="/wiki/October_1" title="October 1">October 1</a></p>
+            <p><b><a href="/wiki/October_19" title="October 19">October 19</a></b></p>
+            <p>Text that should not be there<b><a href="/wiki/October_10" title="October 10">October 10</a></b></p>
+            <p><a href="October_29" title="October 29">October 29</a></p>
+            <table>
+            </table>
+    """
+    #ann = extract_anniversaries(text, 'October')
+    #sol = ["October 1", "October 19"]
+    #print(sol)
 
 
 
+if __name__ == "__main__":
+    # Test code
+    sample_list = [
+    "May 19: The creator has birthday! ; Beautiful day\n",
+    "December 1: just a beautiful day (always?); Winter is coming (No daylight past 15:00)",
+    "November 2: ",
+    "October 1",
+    "June 3: Another beautiful day; hmmm, (1999)\n",
+    "May 3: Just an exuse to put ugly character in test 35$56781-dg///c.*@",
+]
+    #res_df = anniversary_list_to_df(sample_list)
 
+    #print(res_df)
 
-
-    #     records = []
-        
-    #     # Iterate through each entry in the anniversary list
-    # for item in ann_list:
-    #     # Split the string into date and events part
-    #     parts = item.split(':')
-    #     if len(parts) == 2:  # Ensure there is a date and at least one event
-    #         date, events_part = parts
-    #         date = date.strip()  # Remove any leading/trailing whitespace from the date
-            
-    #         # Check if events_part is not empty
-    #         if events_part.strip():
-    #             # Split the events part into individual events
-    #             events = events_part.split(';')
-    #             for event in events:
-    #                 event = event.strip()  # Remove any leading/trailing whitespace from the event
-    #                 if event:  # Check if the event is not an empty string
-    #                     records.append([date, event])
-    #         else:
-    #             # If there are no events, we still add the date with a None or empty string for the event
-    #             records.append([date, None])
-    
-    # # Create a DataFrame from the records list
-    # df = pd.DataFrame(records, columns=["Date", "Event"])
-    
-    # # Remove rows with None or empty 'Event' field
-    # df = df.dropna(subset=['Event']).reset_index(drop=True)
-    
-    # return df
