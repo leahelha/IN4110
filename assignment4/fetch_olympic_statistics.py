@@ -272,7 +272,7 @@ def plot_sport_stats(results: dict[str, dict[str, int]], sport: str, output_dir:
 
     fig, ax = plt.subplots()
 
-    # Plotting each medal type in grouped fashion
+    
     ax.bar(x, gold_medals, width, label='Gold', color='gold')
     ax.bar([p + width for p in x], silver_medals, width, label='Silver', color='silver')
     ax.bar([p + width * 2 for p in x], bronze_medals, width, label='Bronze', color='#cd7f32')
