@@ -11,6 +11,7 @@ from requesting_urls import get_html
 from bs4 import BeautifulSoup
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 # Countries to submit statistics for
 scandinavian_countries = ["Norway", "Sweden", "Denmark"]
 
@@ -47,7 +48,7 @@ def report_scandi_stats(url: str, sports_list: list[str], work_dir: str | Path) 
     stats_dir.mkdir(parents=True, exist_ok=True) 
 
     # Plot the summer/winter gold medal stats
-    #plot_scandi_stats(country_dict, stats_dir)
+    plot_scandi_stats(country_dict, stats_dir)
 
     
     # Iterate through each sport and make a call to get_sport_stats
@@ -67,15 +68,18 @@ def report_scandi_stats(url: str, sports_list: list[str], work_dir: str | Path) 
             #print(country, info)
             medals = get_sport_stats(info['url'], sport)
             results[country] = medals
-        print(results)
+        
+        #print(results)
 
         # Plot the sport-specific medal stats and save the figure
-        #plot_scandi_stats(results, sport, stats_dir)
+        plot_sport_stats(results, sport, stats_dir)
 
         best_country = find_best_country_in_sport(results, medal)
         best_in_sport[sport] = best_country
     
-    print(best_in_sport)
+    #Creating markdown table
+    create_markdown_table(best_in_sport, stats_dir)
+    #print(best_in_sport)
 
 
 
@@ -249,48 +253,93 @@ def find_best_country_in_sport(
         return '/'.join(best)
 
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
     #Testing
-    url = 'https://en.wikipedia.org/wiki/All-time_Olympic_Games_medal_table'
-    scandi_dic = get_scandi_stats(url)
-    medals = get_sport_stats("https://en.wikipedia.org/w/index.php?title=Norway_at_the_Olympics&oldid=1153387488", "Tennis")
-    medals = get_sport_stats('https://en.wikipedia.org/wiki/Denmark_at_the_Olympics', 'Cycling')
-    print(medals)
+    # url = 'https://en.wikipedia.org/wiki/All-time_Olympic_Games_medal_table'
+    # scandi_dic = get_scandi_stats(url)
+    # medals = get_sport_stats("https://en.wikipedia.org/w/index.php?title=Norway_at_the_Olympics&oldid=1153387488", "Tennis")
+    # medals = get_sport_stats('https://en.wikipedia.org/wiki/Denmark_at_the_Olympics', 'Cycling')
+    # print(medals)
 
-    results = {
-        "Norway" : {"Gold" : 2, "Silver" : 1, "Bronze" : 3},
-        "Sweden" : {"Gold" : 2, "Silver" : 2, "Bronze" : 3},
-        "Denmark" : {"Gold" : 2, "Silver" : 2, "Bronze" : 3},
-        }
+    # results = {
+    #     "Norway" : {"Gold" : 2, "Silver" : 1, "Bronze" : 3},
+    #     "Sweden" : {"Gold" : 2, "Silver" : 2, "Bronze" : 3},
+    #     "Denmark" : {"Gold" : 2, "Silver" : 2, "Bronze" : 3},
+    #     }
     
-    best = find_best_country_in_sport(results, 'Gold')
-    #print(best)
+    # best = find_best_country_in_sport(results, 'Gold')
+    # #print(best)
 
 # Define your own plotting functions and optional helper functions
 
 
+def plot_sport_stats(results: dict[str, dict[str, int]], sport: str, output_dir: Path) -> None:
+    """
+    Plot the sport-specific medal stats for Scandinavian countries and save the figure as a PNG.
 
+    Parameters:
+        results (dict): A dictionary with countries as keys and another dictionary with medal types as keys and counts as values.
+        sport (str): The name of the sport.
+        output_dir (Path): The directory where the PNG file will be saved.
+    """
     
-def plot_total_medal_ranking(country_dict, stats_dir):
-    # Assuming country_dict structure is as previously described
-    countries = list(country_dict.keys())
-    summer_medals = [country_dict[country]['medals']['Summer'] for country in countries]
-    winter_medals = [country_dict[country]['medals']['Winter'] for country in countries]
+    countries = list(results.keys())
+    gold_medals = [results[country]['Gold'] for country in countries]
+    silver_medals = [results[country]['Silver'] for country in countries]
+    bronze_medals = [results[country]['Bronze'] for country in countries]
+
 
     x = range(len(countries))
+    width = 0.2
+
     fig, ax = plt.subplots()
-    ax.bar(x, summer_medals, width=0.4, label='Summer', align='center')
-    ax.bar(x, winter_medals, width=0.4, label='Winter', align='edge')
-    ax.set_xticks(x)
+
+    # Plotting each medal type in grouped fashion
+    ax.bar(x, gold_medals, width, label='Gold', color='gold')
+    ax.bar([p + width for p in x], silver_medals, width, label='Silver', color='silver')
+    ax.bar([p + width * 2 for p in x], bronze_medals, width, label='Bronze', color='#cd7f32')
+
+    
+    ax.set_ylabel('Medals')
+    ax.set_title(f'Number of medals in {sport} by Scandinavian country')
+    ax.set_xticks([p + width for p in x])
     ax.set_xticklabels(countries)
     ax.legend()
-    plt.savefig(stats_dir / 'total_medal_ranking.png')
-    plt.close()
-def create_markdown_table(best_in_sport, stats_dir):
+
+    
+    plt.tight_layout()
+    fig.savefig(output_dir / f'{sport}_medal_ranking.png')
+    #plt.show()
+
+    
+
+
+def create_markdown_table(best_in_sport: dict[str, str], stats_dir: Path) -> None:
+    """
+    Create a markdown table that lists the best Scandinavian country in each sport based on the number of gold medals.
+
+    Parameters:
+        best_in_sport (dict): A dictionary with sports as keys and the best country as values.
+        stats_dir (Path): The directory where the markdown file will be saved.
+
+    This function generates a markdown table with two columns: 'Sport' and 'Best country'.
+    It then calls the `save_markdown_table` function to write this table to a markdown file.
+    """
     table_data = [{"Sport": sport, "Best country": country} for sport, country in best_in_sport.items()]
     save_markdown_table(table_data, stats_dir / 'best_of_sport_by_Gold.md')
 
-def save_markdown_table(data, filename):
+def save_markdown_table(data: list[dict[str, str]], filename: Path) -> None:
+    """
+    Save a list of dictionaries as a markdown table to the specified filename.
+
+    Parameters:
+        data (list of dict): A list of dictionaries where each dictionary represents a row in the table.
+        filename (Path): The complete file path for the markdown file to be saved.
+
+    This function converts the list of dictionaries into a pandas DataFrame and then uses the
+    `to_markdown` method to create a markdown formatted string. This string is then written to
+    the file specified by `filename`.
+    """
     markdown = pd.DataFrame(data).to_markdown(index=False)
     with open(filename, 'w') as f:
         f.write(markdown)
@@ -313,7 +362,58 @@ def plot_scandi_stats(
     Returns:
       None
     """
-    # First, plot the total medal ranking for all sports
+    countries = list(country_dict.keys())
+    summer_medals = [country_dict[country]['medals']['Summer'] for country in countries]
+    winter_medals = [country_dict[country]['medals']['Winter'] for country in countries]
+
+    x = np.arange(len(countries)) 
+    width = 0.35 
+
+    fig, ax = plt.subplots()
+    rects1 = ax.bar(x - width/2, summer_medals, width, label='Summer', color='green')
+    rects2 = ax.bar(x + width/2, winter_medals, width, label='Winter', color='blue')
+
+   
+    ax.set_ylabel('Gold Medals')
+    ax.set_title('Gold Medals by Scandinavian Countries in Summer and Winter Olympics')
+    ax.set_xticks(x)
+    ax.set_xticklabels(countries)
+    ax.legend()
+
+
+    def autolabel(rects):
+        for rect in rects:
+            height = rect.get_height()
+            ax.annotate('{}'.format(height),
+                        xy=(rect.get_x() + rect.get_width() / 2, height),
+                        xytext=(0, 3),  
+                        textcoords="offset points",
+                        ha='center', va='bottom')
+
+    autolabel(rects1)
+    autolabel(rects2)
+
+    fig.tight_layout()
+
+    
+    plt.savefig(output_parent / 'total_medal_ranking.png')
+    #plt.show()  
+
+
+
+
+
+# run the whole thing if called as a script, for quick testing
+if __name__ == "__main__":
+    url = "https://en.wikipedia.org/wiki/All-time_Olympic_Games_medal_table"
+    work_dir = Path(__file__).parent.absolute()
+    report_scandi_stats(url, summer_sports, work_dir)
+
+
+
+"""   
+SCRAP 
+ # First, plot the total medal ranking for all sports
     plot_total_medal_ranking(country_dict, stats_dir)
 
     # Then, plot the medal ranking for each sport
@@ -323,15 +423,9 @@ def plot_scandi_stats(
     # Finally, create the markdown table for the best country in each sport
     create_markdown_table(best_in_sport, stats_dir)
 
-# run the whole thing if called as a script, for quick testing
-if __name__ == "__main__":
-    url = "https://en.wikipedia.org/wiki/All-time_Olympic_Games_medal_table"
-    work_dir = ...
-    #report_scandi_stats(url, summer_sports, work_dir)
 
 
-
-"""    work_dir = Path(work_dir)
+work_dir = Path(work_dir)
     stats_dir = work_dir / "olympic_games_results"
 
      # Extracting the data for plotting
@@ -359,4 +453,28 @@ if __name__ == "__main__":
     # Saving the figure
     plt.tight_layout()
     plt.savefig(stats_dir / 'total_medal_ranking.png')
-    plt.close()"""
+    plt.close()
+    
+    
+    def plot_total_medal_ranking(country_dict, stats_dir):
+    
+    countries = list(country_dict.keys())
+    summer_medals = [country_dict[country]['medals']['Summer'] for country in countries]
+    winter_medals = [country_dict[country]['medals']['Winter'] for country in countries]
+
+    x = range(len(countries))
+    fig, ax = plt.subplots()
+    ax.bar(x, summer_medals, width=0.4, label='Summer', align='center')
+    ax.bar(x, winter_medals, width=0.4, label='Winter', align='edge')
+    ax.set_xticks(x)
+    ax.set_xticklabels(countries)
+    ax.legend()
+    plt.savefig(stats_dir / 'total_medal_ranking.png')
+    plt.close()
+
+    
+    
+    
+    
+    
+    """

@@ -29,7 +29,7 @@ def get_html(url: str, params: dict | None = None, output: str | None = None):
 
     
     if response.status_code == 200:
-        print('Requesting url. Success!')
+        #print('Requesting url. Success!')
         html_str = response.text
 
         if output:
