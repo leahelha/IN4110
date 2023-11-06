@@ -106,15 +106,61 @@ def anniversary_list_to_df(ann_list: list[str]) -> pd.DataFrame:
     Returns:
         df (pd.Dataframe): A (dense) dataframe with columns ["Date"] and ["Event"] where each row represents a single event
     """
-    raise NotImplementedError("remove me to begin task")
-
     # Store the split parts of the string as a table
-    ann_table = ...
+    ann_table = []
+    
     # Headers for the dataframe
     headers = ["Date", "Event"]
-    df = ...
+    
+    # Regex to match semicolons outside of parentheses
+    event_split = r';(?![^(]*\))'
+
+    # Iterate through each entry in the anniversary list
+    for ann in ann_list:
+        
+        #print(f'Anniversary is {ann}')
+
+        # Splitting the string into date and event parts
+        date_part, _, event_part = ann.partition(':')
+        date_part = date_part.strip()
+
+        # print(f'DATE PART IS {date_part}')
+        # print(f'EVENT PART IS {event_part}')
+
+        # If there is no event part, skip 
+        if not event_part.strip():
+            continue
+
+        # For events on the same day
+        # Split the event part into individual events, ignoring semicolons within parentheses
+        events = re.split(event_split, event_part)
+        #print(events)
+        
+        for event in events:
+            event = event.strip()
+            if event:  # Only append if there is an event
+                ann_table.append([date_part, event])
+
+    # Create a DataFrame from the ann_table list
+    df = pd.DataFrame(ann_table, columns=headers)
+    
     return df
 
+
+if __name__ == "__main__":
+    # Test code
+    sample_list = [
+    "May 19: The creator has birthday! ; Beautiful day\n",
+    "December 1: just a beautiful day (always?); Winter is coming (No daylight past 15:00)",
+    "November 2: ",
+    "October 1",
+    "June 3: Another beautiful day; hmmm, (1999)\n",
+    "May 3: Just an exuse to put ugly character in test 35$56781-dg///c.*@",
+]
+    res_df = anniversary_list_to_df(sample_list)
+
+    print(res_df)
+    
 
 def anniversary_table(
     namespace_url: str, month_list: list[str], work_dir: str | Path
@@ -189,3 +235,38 @@ if __name__ == "__main__":
     #             print(article)
         
     #         #ann_list.append(text.strip())
+
+
+
+
+
+
+    #     records = []
+        
+    #     # Iterate through each entry in the anniversary list
+    # for item in ann_list:
+    #     # Split the string into date and events part
+    #     parts = item.split(':')
+    #     if len(parts) == 2:  # Ensure there is a date and at least one event
+    #         date, events_part = parts
+    #         date = date.strip()  # Remove any leading/trailing whitespace from the date
+            
+    #         # Check if events_part is not empty
+    #         if events_part.strip():
+    #             # Split the events part into individual events
+    #             events = events_part.split(';')
+    #             for event in events:
+    #                 event = event.strip()  # Remove any leading/trailing whitespace from the event
+    #                 if event:  # Check if the event is not an empty string
+    #                     records.append([date, event])
+    #         else:
+    #             # If there are no events, we still add the date with a None or empty string for the event
+    #             records.append([date, None])
+    
+    # # Create a DataFrame from the records list
+    # df = pd.DataFrame(records, columns=["Date", "Event"])
+    
+    # # Remove rows with None or empty 'Event' field
+    # df = df.dropna(subset=['Event']).reset_index(drop=True)
+    
+    # return df
