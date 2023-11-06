@@ -7,7 +7,8 @@ collecting olympic statistics from wikipedia
 from __future__ import annotations
 
 from pathlib import Path
-
+from requesting_urls import get_html
+from bs4 import BeautifulSoup
 
 # Countries to submit statistics for
 scandinavian_countries = ["Norway", "Sweden", "Denmark"]
@@ -82,22 +83,58 @@ def get_scandi_stats(
 
         with the tree keys "Norway", "Denmark", "Sweden".
     """
-    raise NotImplementedError("remove me to begin task")
+    
+    # Gettting html from url
+    html = get_html(url)
+    # Parsing html
+    soup = BeautifulSoup(html, 'html.parser')
+    
 
-    html = ...
-    soup = ...
-    table = ...
     base_url = "https://en.wikipedia.org"
 
-    rows = ...
+    # Using Beautiful Soup to make tabel
+    table = soup.find('table', {'class': 'wikitable'})
+    rows = table.find_all('tr')
 
     country_dict: dict[str, dict[str, str | dict[str, int]]] = {}
+   
 
     for row in rows:
-        cols = ...
-        ...
+        cols = row.find_all('td')
+        if cols:
+            country_name = cols[0].get_text().strip()
+            country_name = country_name.split()  #Get rid of some extra stuff next to the names
+            #print(country_name)
+            
+            if country_name[0] in scandinavian_countries:
+                #print(country_name)
+
+                # URL to the country's Olympic page
+                country_url = base_url + cols[0].find('a')['href']
+                #print(country_url)
+
+                # Gold medals for summer and winter:
+                summer_gold = int(cols[2].get_text().strip())
+                winter_gold = int(cols[7].get_text().strip())
+                # print(summer_gold)
+                # print(winter_gold)
+
+                country_dict[country_name[0]] = {
+                    "url": country_url,
+                    "medals": {
+                        "Summer": summer_gold,
+                        "Winter": winter_gold,
+                    },
+                }
+        
 
     return country_dict
+
+if __name__ == "__main__":
+    #Testing
+    url = 'https://en.wikipedia.org/wiki/All-time_Olympic_Games_medal_table'
+    scandi_dic = get_scandi_stats(url)
+    print(scandi_dic)
 
 
 def get_sport_stats(country_url: str, sport: str) -> dict[str, int]:
@@ -191,4 +228,4 @@ def plot_scandi_stats(
 if __name__ == "__main__":
     url = "https://en.wikipedia.org/wiki/All-time_Olympic_Games_medal_table"
     work_dir = ...
-    report_scandi_stats(url, summer_sports, work_dir)
+    #report_scandi_stats(url, summer_sports, work_dir)
