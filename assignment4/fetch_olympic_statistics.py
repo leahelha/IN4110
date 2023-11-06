@@ -184,13 +184,9 @@ def get_sport_stats(country_url: str, sport: str) -> dict[str, int]:
                     
     return medals
 
-if __name__ == "__main__":
-    #Testing
-    url = 'https://en.wikipedia.org/wiki/All-time_Olympic_Games_medal_table'
-    scandi_dic = get_scandi_stats(url)
-    #medals = get_sport_stats("https://en.wikipedia.org/w/index.php?title=Norway_at_the_Olympics&oldid=1153387488", "Tennis")
-    medals = get_sport_stats('https://en.wikipedia.org/wiki/Denmark_at_the_Olympics', 'Cycling')
-    print(medals)
+
+
+
 
 def find_best_country_in_sport(
     results: dict[str, dict[str, int]], medal: str = "Gold"
@@ -212,19 +208,49 @@ def find_best_country_in_sport(
                        If two countries lead return their names separated with '/' like 'Norway/Sweden'
                        If all or none of the countries lead, return string 'None'
     """
-    raise NotImplementedError("remove me to begin task")
+    
     valid_medals = {"Gold", "Silver", "Bronze"}
     if medal not in valid_medals:
         raise ValueError(
             f"{medal} is invalid parameter for ranking, must be in {valid_medals}"
         )
 
+    items = results.items()
+
+    # Counting nr of {medal} for each country
+    count = {}
+    for country, stats in items:
+        count.update({country: stats[medal]})
+    
+    # Finding the highest nr of {medal}
+    max_medals = max(count.values())
+
     # Get the requested medals and determine the best
-    best = ...
+    best = [country for country, count in count.items() if count == max_medals]
+    
+    # Make sure to return no more than 2 'best' countries, and none if there are 0 medals
+    if len(best)==3 or max_medals == 0:
+        return 'None'
+    else:
+        return '/'.join(best)
 
-    ...
-    return best
 
+if __name__ == "__main__":
+    #Testing
+    url = 'https://en.wikipedia.org/wiki/All-time_Olympic_Games_medal_table'
+    #scandi_dic = get_scandi_stats(url)
+    #medals = get_sport_stats("https://en.wikipedia.org/w/index.php?title=Norway_at_the_Olympics&oldid=1153387488", "Tennis")
+    #medals = get_sport_stats('https://en.wikipedia.org/wiki/Denmark_at_the_Olympics', 'Cycling')
+    #print(medals)
+
+    results = {
+        "Norway" : {"Gold" : 2, "Silver" : 1, "Bronze" : 3},
+        "Sweden" : {"Gold" : 2, "Silver" : 2, "Bronze" : 3},
+        "Denmark" : {"Gold" : 2, "Silver" : 2, "Bronze" : 3},
+        }
+    
+    best = find_best_country_in_sport(results, 'Gold')
+    print(best)
 
 # Define your own plotting functions and optional helper functions
 
