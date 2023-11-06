@@ -259,11 +259,6 @@ def find_best_country_in_sport(
 def plot_sport_stats(results: dict[str, dict[str, int]], sport: str, output_dir: Path) -> None:
     """
     Plot the sport-specific medal stats for Scandinavian countries and save the figure as a PNG.
-
-    Parameters:
-        results (dict): A dictionary with countries as keys and another dictionary with medal types as keys and counts as values.
-        sport (str): The name of the sport.
-        output_dir (Path): The directory where the PNG file will be saved.
     """
     
     countries = list(results.keys())
