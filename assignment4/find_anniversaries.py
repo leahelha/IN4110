@@ -9,6 +9,10 @@ from pathlib import Path
 
 import pandas as pd
 
+import re
+from bs4 import BeautifulSoup
+from filter_urls import find_urls, find_articles
+
 # Month names to submit for, from Wikipedia:Selected anniversaries namespace
 months_in_namespace = [
     "January",
@@ -47,17 +51,48 @@ def extract_anniversaries(html: str, month: str) -> list[str]:
                                 '{Month} {day}: Event 1 (maybe some parentheses); Event 2; Event 3, something, something\n'
                                 {Month} can be any month in the namespace and {day} is a number 1-31
     """
-    raise NotImplementedError("remove me to begin task")
+    
     # parse the HTML
-    soup = ...
+    soup = BeautifulSoup(html, 'html.parser')
 
     # Get all the paragraphs:
-    paragraphs = ...
+    paragraphs = soup.find_all('p')
 
     # Filter the passages to keep only the highlighted anniversaries
     ann_list = []
 
+    # Find special anniversaries through finding the ones with links
+    pattern = rf'<p>.*?<a href="/wiki/{month}_(\d+)".*?title="{month} \1">{month} \1'
+    
+    # Filter the paragraphs to find the anniversaries, and saving them to a list
+    for paragraph in paragraphs:
+        text = paragraph.get_text()
+        match = re.search(pattern, str(paragraph), flags=re.IGNORECASE)
+       
+        if match and len(text.split())<3:
+            ann_list.append(text.strip())
+    
+
+    print(ann_list)
     return ann_list
+
+if __name__ == "__main__":
+    # Test code
+    text = """
+            <p></p>
+            <p>Nothing about a month here</p>
+            <p>October 3:</p>
+            <p><a href="/wiki/October_1" title="October 1">October 1</a></p>
+            <p><b><a href="/wiki/October_19" title="October 19">October 19</a></b></p>
+            <p>Text that should not be there<b><a href="/wiki/October_10" title="October 10">October 10</a></b></p>
+            <p><a href="October_29" title="October 29">October 29</a></p>
+            <table>
+            </table>
+    """
+    ann = extract_anniversaries(text, 'October')
+    sol = ["October 1", "October 19"]
+    print(sol)
+
 
 
 def anniversary_list_to_df(ann_list: list[str]) -> pd.DataFrame:
@@ -128,3 +163,29 @@ if __name__ == "__main__":
     work_dir = ...
     namespace_url = "https://en.wikipedia.org/wiki/Wikipedia:Selected_anniversaries/"
     ...
+
+
+
+ #pattern = rf'<p><.*?/wiki/{month}_\d+" title="{month} \d{1,2}">{month} \d{1,2}</a>'
+    #pattern = rf'<a href="/wiki/{month}_{day}" title="{month} {day}">{month} {day}</a>'
+
+    # pattern = rf'<p><.*?/wiki/{month}_\d+" title="{month} \d{1,2}">{month} \d{1,2}</a>'
+    
+    # pattern = rf'<p><[a-zA-Z0-9=":;\s]*\bhref="/wiki/{month}_\d+".*?>{month}\b'
+
+
+
+
+            
+
+    # for paragraph in paragraphs:
+    #     text = paragraph.get_text()
+    #     #print(text.strip())
+    #     text_list.append(text.strip())
+
+    # for article in articles:
+    #     for text in text_list:
+    #         if month in article:
+    #             print(article)
+        
+    #         #ann_list.append(text.strip())
