@@ -101,7 +101,7 @@ def find_articles(html: str, output: str | None = None) -> set[str]:
         
         with open(output, 'w') as outfile:
             for article in articles:
-                outfile.write(f'{article}\n')  #*** check
+                outfile.write(f'{article}\n') 
         
     
     return articles
@@ -137,22 +137,5 @@ def find_img_src(html: str):
 
 
 
-"""   
-SCRAP
- 
-for line in html.split(f'\n'):
-        if not line.strip().startswith('#'):
-            match = url_pat.search(line)
-            #print(match)
-           
-            if match:
-                #print(match)
-                url = match.group(1)
-                if not url.startswith('https:'):
-                    url = base_url.rstrip('/') + '/' + url.lstrip('/')
 
-                # if not url.startswith('/'):
-                #     #print(url)
-                urls.add(url)
-"""
                     

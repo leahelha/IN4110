@@ -253,23 +253,6 @@ def find_best_country_in_sport(
         return '/'.join(best)
 
 
-# if __name__ == "__main__":
-    #Testing
-    # url = 'https://en.wikipedia.org/wiki/All-time_Olympic_Games_medal_table'
-    # scandi_dic = get_scandi_stats(url)
-    # medals = get_sport_stats("https://en.wikipedia.org/w/index.php?title=Norway_at_the_Olympics&oldid=1153387488", "Tennis")
-    # medals = get_sport_stats('https://en.wikipedia.org/wiki/Denmark_at_the_Olympics', 'Cycling')
-    # print(medals)
-
-    # results = {
-    #     "Norway" : {"Gold" : 2, "Silver" : 1, "Bronze" : 3},
-    #     "Sweden" : {"Gold" : 2, "Silver" : 2, "Bronze" : 3},
-    #     "Denmark" : {"Gold" : 2, "Silver" : 2, "Bronze" : 3},
-    #     }
-    
-    # best = find_best_country_in_sport(results, 'Gold')
-    # #print(best)
-
 # Define your own plotting functions and optional helper functions
 
 
@@ -409,72 +392,3 @@ if __name__ == "__main__":
     work_dir = Path(__file__).parent.absolute()
     report_scandi_stats(url, summer_sports, work_dir)
 
-
-
-"""   
-SCRAP 
- # First, plot the total medal ranking for all sports
-    plot_total_medal_ranking(country_dict, stats_dir)
-
-    # Then, plot the medal ranking for each sport
-    for sport in sports_list:
-        plot_sport_medal_ranking(country_dict, sport, stats_dir)
-
-    # Finally, create the markdown table for the best country in each sport
-    create_markdown_table(best_in_sport, stats_dir)
-
-
-
-work_dir = Path(work_dir)
-    stats_dir = work_dir / "olympic_games_results"
-
-     # Extracting the data for plotting
-    countries = list(country_dict.keys())
-    summer_medals = [country_dict[country]['medals']['Summer'] for country in countries]
-    winter_medals = [country_dict[country]['medals']['Winter'] for country in countries]
-
-    # Setting the positions and width for the bars
-    positions = range(len(countries))
-    bar_width = 0.35
-
-    # Plotting both summer and winter medals
-    fig, ax = plt.subplots()
-    summer_bars = ax.bar(positions, summer_medals, bar_width, label='Summer Olympics')
-    winter_bars = ax.bar([p + bar_width for p in positions], winter_medals, bar_width, label='Winter Olympics')
-
-    # Adding some text for labels, title and axes ticks
-    ax.set_xlabel('Countries')
-    ax.set_ylabel('Gold Medals')
-    ax.set_title('Total number of gold medals in Summer and Winter Olympics')
-    ax.set_xticks([p + bar_width / 2 for p in positions])
-    ax.set_xticklabels(countries)
-    ax.legend()
-
-    # Saving the figure
-    plt.tight_layout()
-    plt.savefig(stats_dir / 'total_medal_ranking.png')
-    plt.close()
-    
-    
-    def plot_total_medal_ranking(country_dict, stats_dir):
-    
-    countries = list(country_dict.keys())
-    summer_medals = [country_dict[country]['medals']['Summer'] for country in countries]
-    winter_medals = [country_dict[country]['medals']['Winter'] for country in countries]
-
-    x = range(len(countries))
-    fig, ax = plt.subplots()
-    ax.bar(x, summer_medals, width=0.4, label='Summer', align='center')
-    ax.bar(x, winter_medals, width=0.4, label='Winter', align='edge')
-    ax.set_xticks(x)
-    ax.set_xticklabels(countries)
-    ax.legend()
-    plt.savefig(stats_dir / 'total_medal_ranking.png')
-    plt.close()
-
-    
-    
-    
-    
-    
-    """
