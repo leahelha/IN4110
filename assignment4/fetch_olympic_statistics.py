@@ -10,6 +10,7 @@ from pathlib import Path
 from requesting_urls import get_html
 from bs4 import BeautifulSoup
 import numpy as np
+import matplotlib.pyplot as plt
 # Countries to submit statistics for
 scandinavian_countries = ["Norway", "Sweden", "Denmark"]
 
@@ -36,27 +37,46 @@ def report_scandi_stats(url: str, sports_list: list[str], work_dir: str | Path) 
         None
     """
 
+
+    work_dir = Path(work_dir)
     # Make a call to get_scandi_stats
+    country_dict = get_scandi_stats(url)
+    print(country_dict)
+
+    stats_dir = work_dir / "olympic_games_results"
+    stats_dir.mkdir(parents=True, exist_ok=True) 
+
     # Plot the summer/winter gold medal stats
+    #plot_scandi_stats(country_dict, stats_dir)
+
+    
     # Iterate through each sport and make a call to get_sport_stats
     # Plot the sport specific stats
     # Make a call to find_best_country_in_sport for each sport
     # Create and save the md table of best in each sport stats
-    raise NotImplementedError("remove me to begin task")
 
-    work_dir = Path(work_dir)
-    country_dict = ...
 
-    stats_dir = work_dir / "olympic_games_results"
-    ...
-
-    best_in_sport = []
+    best_in_sport = {}
     # Valid values for medal ["Gold" | "Silver" |"Bronze"]
-    medal = ...
-
+    medal = "Gold" #["Gold", "Silver", "Bronze"]
+   
     for sport in sports_list:
         results: dict[str, dict[str, int]] = {}
-        ...
+
+        for country, info in country_dict.items():
+            #print(country, info)
+            medals = get_sport_stats(info['url'], sport)
+            results[country] = medals
+        print(results)
+
+        # Plot the sport-specific medal stats and save the figure
+        #plot_scandi_stats(results, sport, stats_dir)
+
+        best_country = find_best_country_in_sport(results, medal)
+        best_in_sport[sport] = best_country
+    
+    print(best_in_sport)
+
 
 
 def get_scandi_stats(
@@ -130,8 +150,6 @@ def get_scandi_stats(
 
     return country_dict
 
-
-
 def get_sport_stats(country_url: str, sport: str) -> dict[str, int]:
     """Given the url to country specific performance page, get the number of gold, silver, and bronze medals
       the given country has acquired in the requested sport in summer Olympic games.
@@ -174,8 +192,8 @@ def get_sport_stats(country_url: str, sport: str) -> dict[str, int]:
 
                 #print(sport_name = np.where(cols==f"title={sport}"))
                 if sport_name[:len(sport)] == sport.lower():
-                    print(sport_name[:len(sport)])
-                    print(sport)
+                    # print(sport_name[:len(sport)])
+                    # print(sport)
                     medals["Gold"] = int(cols[0].text.strip())
                     medals["Silver"] = int(cols[1].text.strip())
                     medals["Bronze"] = int(cols[2].text.strip())
@@ -183,10 +201,6 @@ def get_sport_stats(country_url: str, sport: str) -> dict[str, int]:
 
                     
     return medals
-
-
-
-
 
 def find_best_country_in_sport(
     results: dict[str, dict[str, int]], medal: str = "Gold"
@@ -238,10 +252,10 @@ def find_best_country_in_sport(
 if __name__ == "__main__":
     #Testing
     url = 'https://en.wikipedia.org/wiki/All-time_Olympic_Games_medal_table'
-    #scandi_dic = get_scandi_stats(url)
-    #medals = get_sport_stats("https://en.wikipedia.org/w/index.php?title=Norway_at_the_Olympics&oldid=1153387488", "Tennis")
-    #medals = get_sport_stats('https://en.wikipedia.org/wiki/Denmark_at_the_Olympics', 'Cycling')
-    #print(medals)
+    scandi_dic = get_scandi_stats(url)
+    medals = get_sport_stats("https://en.wikipedia.org/w/index.php?title=Norway_at_the_Olympics&oldid=1153387488", "Tennis")
+    medals = get_sport_stats('https://en.wikipedia.org/wiki/Denmark_at_the_Olympics', 'Cycling')
+    print(medals)
 
     results = {
         "Norway" : {"Gold" : 2, "Silver" : 1, "Bronze" : 3},
@@ -250,9 +264,38 @@ if __name__ == "__main__":
         }
     
     best = find_best_country_in_sport(results, 'Gold')
-    print(best)
+    #print(best)
 
 # Define your own plotting functions and optional helper functions
+
+
+
+    
+def plot_total_medal_ranking(country_dict, stats_dir):
+    # Assuming country_dict structure is as previously described
+    countries = list(country_dict.keys())
+    summer_medals = [country_dict[country]['medals']['Summer'] for country in countries]
+    winter_medals = [country_dict[country]['medals']['Winter'] for country in countries]
+
+    x = range(len(countries))
+    fig, ax = plt.subplots()
+    ax.bar(x, summer_medals, width=0.4, label='Summer', align='center')
+    ax.bar(x, winter_medals, width=0.4, label='Winter', align='edge')
+    ax.set_xticks(x)
+    ax.set_xticklabels(countries)
+    ax.legend()
+    plt.savefig(stats_dir / 'total_medal_ranking.png')
+    plt.close()
+def create_markdown_table(best_in_sport, stats_dir):
+    table_data = [{"Sport": sport, "Best country": country} for sport, country in best_in_sport.items()]
+    save_markdown_table(table_data, stats_dir / 'best_of_sport_by_Gold.md')
+
+def save_markdown_table(data, filename):
+    markdown = pd.DataFrame(data).to_markdown(index=False)
+    with open(filename, 'w') as f:
+        f.write(markdown)
+
+
 
 
 def plot_scandi_stats(
@@ -270,12 +313,50 @@ def plot_scandi_stats(
     Returns:
       None
     """
-    raise NotImplementedError("remove me to begin task")
-    ...
+    # First, plot the total medal ranking for all sports
+    plot_total_medal_ranking(country_dict, stats_dir)
 
+    # Then, plot the medal ranking for each sport
+    for sport in sports_list:
+        plot_sport_medal_ranking(country_dict, sport, stats_dir)
+
+    # Finally, create the markdown table for the best country in each sport
+    create_markdown_table(best_in_sport, stats_dir)
 
 # run the whole thing if called as a script, for quick testing
 if __name__ == "__main__":
     url = "https://en.wikipedia.org/wiki/All-time_Olympic_Games_medal_table"
     work_dir = ...
     #report_scandi_stats(url, summer_sports, work_dir)
+
+
+
+"""    work_dir = Path(work_dir)
+    stats_dir = work_dir / "olympic_games_results"
+
+     # Extracting the data for plotting
+    countries = list(country_dict.keys())
+    summer_medals = [country_dict[country]['medals']['Summer'] for country in countries]
+    winter_medals = [country_dict[country]['medals']['Winter'] for country in countries]
+
+    # Setting the positions and width for the bars
+    positions = range(len(countries))
+    bar_width = 0.35
+
+    # Plotting both summer and winter medals
+    fig, ax = plt.subplots()
+    summer_bars = ax.bar(positions, summer_medals, bar_width, label='Summer Olympics')
+    winter_bars = ax.bar([p + bar_width for p in positions], winter_medals, bar_width, label='Winter Olympics')
+
+    # Adding some text for labels, title and axes ticks
+    ax.set_xlabel('Countries')
+    ax.set_ylabel('Gold Medals')
+    ax.set_title('Total number of gold medals in Summer and Winter Olympics')
+    ax.set_xticks([p + bar_width / 2 for p in positions])
+    ax.set_xticklabels(countries)
+    ax.legend()
+
+    # Saving the figure
+    plt.tight_layout()
+    plt.savefig(stats_dir / 'total_medal_ranking.png')
+    plt.close()"""
