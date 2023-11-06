@@ -9,7 +9,7 @@ from __future__ import annotations
 from pathlib import Path
 from requesting_urls import get_html
 from bs4 import BeautifulSoup
-
+import numpy as np
 # Countries to submit statistics for
 scandinavian_countries = ["Norway", "Sweden", "Denmark"]
 
@@ -130,11 +130,6 @@ def get_scandi_stats(
 
     return country_dict
 
-if __name__ == "__main__":
-    #Testing
-    url = 'https://en.wikipedia.org/wiki/All-time_Olympic_Games_medal_table'
-    scandi_dic = get_scandi_stats(url)
-    print(scandi_dic)
 
 
 def get_sport_stats(country_url: str, sport: str) -> dict[str, int]:
@@ -150,10 +145,14 @@ def get_sport_stats(country_url: str, sport: str) -> dict[str, int]:
                           Format:
                           {"Gold" : x, "Silver" : y, "Bronze" : z}
     """
-    raise NotImplementedError("remove me to begin task")
-    html = ...
-    soup = ...
-    table = ...
+    
+    # Gettting html from url
+    html = get_html(country_url)
+    # Parsing html
+    soup = BeautifulSoup(html, 'html.parser')
+    # Using Beautiful Soup to make tabel
+    tables = soup.find_all('table', {'class': 'wikitable'})
+    #print(table[1])
 
     medals = {
         "Gold": 0,
@@ -161,12 +160,37 @@ def get_sport_stats(country_url: str, sport: str) -> dict[str, int]:
         "Bronze": 0,
     }
 
-    rows = ...
+    for table in tables:
+        rows = table.find_all('tr')
 
-    for row in rows:
-        ...
+        for row in rows:
+            cols = row.find_all('td')
+            
+            if cols:
+                #print(row.text.strip())
+            
+                sport_name = row.text.strip()#cols[0].text.strip()
+                sport_name = sport_name.lower()
+
+                #print(sport_name = np.where(cols==f"title={sport}"))
+                if sport_name[:len(sport)] == sport.lower():
+                    print(sport_name[:len(sport)])
+                    print(sport)
+                    medals["Gold"] = int(cols[0].text.strip())
+                    medals["Silver"] = int(cols[1].text.strip())
+                    medals["Bronze"] = int(cols[2].text.strip())
+                    break  # Exit the loop after finding the sport
+
+                    
     return medals
 
+if __name__ == "__main__":
+    #Testing
+    url = 'https://en.wikipedia.org/wiki/All-time_Olympic_Games_medal_table'
+    scandi_dic = get_scandi_stats(url)
+    #medals = get_sport_stats("https://en.wikipedia.org/w/index.php?title=Norway_at_the_Olympics&oldid=1153387488", "Tennis")
+    medals = get_sport_stats('https://en.wikipedia.org/wiki/Denmark_at_the_Olympics', 'Cycling')
+    print(medals)
 
 def find_best_country_in_sport(
     results: dict[str, dict[str, int]], medal: str = "Gold"
