@@ -105,7 +105,7 @@ def anniversary_list_to_df(ann_list: list[str]) -> pd.DataFrame:
     # regex for split ;
     event_split = r';(?![^(]*\))'
 
-    # Iterate through each entry in the aniversary list
+    # Iterating through each entry in the aniversary list
     for ann in ann_list:
         #print(f'Anniversary is {ann}')
 
@@ -121,7 +121,7 @@ def anniversary_list_to_df(ann_list: list[str]) -> pd.DataFrame:
             continue
 
         # For events on the same date
-        # Split the event part into individual events, ignoring semicolons within parentheses
+        # Splitting the event part into individual events, ignoring semicolons within parentheses
         events = re.split(event_split, event_part)
         #print(events)
         
@@ -130,7 +130,7 @@ def anniversary_list_to_df(ann_list: list[str]) -> pd.DataFrame:
             if event:  # Only append if there is an event
                 ann_table.append([date_part, event])
 
-    # Create a DataFrame from the ann_table list
+    # Creating a DataFrame from the ann_table list
     df = pd.DataFrame(ann_table, columns=headers)
     
     return df
