@@ -211,9 +211,9 @@ def find_dates(text: str, output: str | None = None) -> list:
 
     
     
-    print('LOOP IS DONE \n')
-    print(text)
-    print(f'DATE: {dates}')
+    # print('LOOP IS DONE \n')
+    # print(text)
+    # print(f'DATE: {dates}')
 
     # Write to file if wanted
     

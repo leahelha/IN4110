@@ -102,10 +102,10 @@ def anniversary_list_to_df(ann_list: list[str]) -> pd.DataFrame:
     # Headers for the dataframe
     headers = ["Date", "Event"]
     
-    # Regex to match semicolons outside of parentheses
+    # regex for split ;
     event_split = r';(?![^(]*\))'
 
-    # Iterate through each entry in the anniversary list
+    # Iterate through each entry in the aniversary list
     for ann in ann_list:
         #print(f'Anniversary is {ann}')
 
@@ -120,7 +120,7 @@ def anniversary_list_to_df(ann_list: list[str]) -> pd.DataFrame:
         if not event_part.strip():
             continue
 
-        # For events on the same day
+        # For events on the same date
         # Split the event part into individual events, ignoring semicolons within parentheses
         events = re.split(event_split, event_part)
         #print(events)
