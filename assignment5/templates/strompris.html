@@ -57,6 +57,24 @@
     <form action="javascript:refreshPlot()" id="price-form">
       <!--
       -->
+      <label for="end">End Date:</label>
+      <input type="date" id="end" name="end" value="2023-01-01" min="2022-01-01" max="2023-12-31">
+      
+      <label for="days">Number of Days:</label>
+      <input type="number" id="days" name="days" value="7" min="1" max="30">
+      
+      <!-- Location checkboxes -->
+      <div>
+        <p>Select Locations:</p>
+        <label><input type="checkbox" name="locations" value="NO1"> Oslo (NO1)</label>
+        <label><input type="checkbox" name="locations" value="NO2"> Kristiansand (NO2)</label>
+        <label><input type="checkbox" name="locations" value="NO3"> Trondheim (NO3)</label>
+        <label><input type="checkbox" name="locations" value="NO4"> Tromsø (NO4)</label>
+        <label><input type="checkbox" name="locations" value="NO5"> Bergen (NO5)</label>
+        
+      </div>
+      
+      <input type="submit" value="Update Chart">
     </form>
       <!-- Header Section -->
     <header>

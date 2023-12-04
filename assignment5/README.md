@@ -1,7 +1,7 @@
 # IN3110 strømpris
 
 ## Tasks completed: 
-5.1, 5.2
+5.1, 5.2 and 5.3
 
 ## Requirements:
 Clone the assignment5 folder on your PC
@@ -38,4 +38,4 @@ Run app.py by running in your terminal:
 And then open the link that is given. There's your plot!
 Note this will also save the plot as an html file for you.
 
-
+Once you are in the browser, you may adjust the location and time range for the visualization of the data.
