@@ -161,8 +161,8 @@ def plot_prices(df: pd.DataFrame) -> alt.Chart:
     """
    # Plotting with altair
     chart = alt.Chart(df).mark_line().encode(
-        x='time_start:T',  # Time on x-axis
-        y='NOK_per_kWh:Q',  # Price on y-axis
+        x=alt.X('time_start:T',  axis=alt.Axis(title='Time')), # Time on x-axis
+        y=alt.Y('NOK_per_kWh:Q', axis=alt.Axis(title='Price [NOK per kWh]')),  # Price on y-axis
         color='location:N',  # Different line color for each location
         tooltip=['time_start:T', 'NOK_per_kWh:Q', 'location:N']
     ).properties(
