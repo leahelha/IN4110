@@ -6,6 +6,7 @@ from __future__ import annotations
 import datetime
 import os
 
+import uvicornp
 from typing import List, Optional
 from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
@@ -106,7 +107,7 @@ def plot_prices_json(
 def main():
     """Launches the application on port 5000 with uvicorn"""
     # use uvicorn to launch your application on port 5000
-    ...
+    uvicorn.run(app, port=5000)
 
 
 if __name__ == "__main__":

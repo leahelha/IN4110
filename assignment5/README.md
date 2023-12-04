@@ -31,7 +31,10 @@ Run strompris.py by executing:
 Define your parameters in the file, or let the defaults run.
 
 
-Start the FastAPI by running in your terminal:
-'uvicorn app:app --reload
+Run app.py by running in your terminal:
+'python3 app.py'
+
+And then open the link that is given. There's your plot!
+Note this will also save the plot as an html file for you.
 
 
