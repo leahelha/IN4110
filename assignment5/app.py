@@ -6,6 +6,9 @@ from __future__ import annotations
 import datetime
 import os
 
+from fastapi import FastAPI, Request
+from fastapi.templating import Jinja2Templates
+
 import altair as alt
 from fastapi import FastAPI, Query, Request
 from fastapi.templating import Jinja2Templates
@@ -21,7 +24,7 @@ from strompris import (
 )
 
 app = FastAPI()
-templates = ...
+templates = Jinja2Templates(directory="templates")
 
 
 # `GET /` should render the `strompris.html` template
@@ -30,8 +33,17 @@ templates = ...
 # - location_codes: location code dict
 # - today: current date
 
+@app.get("/")
+def strompris_template(request: Request):
+    inputs = {
+        "request": request,
+        "location_codes": LOCATION_CODES.keys(),
+        "today": datetime.date.today()
 
-...
+    }
+
+    template = templates.TemplateResponse('strompris.html', inputs)
+    return template
 
 
 # GET /plot_prices.json should take inputs:
@@ -43,8 +55,22 @@ templates = ...
 # produced by `plot_prices`
 # (task 5.6: return chart stacked with plot_daily_prices)
 
+@app.get('/plot_prices.json')
+def plot_prices_json(
+    locations: Optional[List[str]] = Query(default=None),
+    end: Optional[date] = None,
+    days: Optional[int] = 7
+):
+    # Getting the DataFrame produced through function defined in strompris.py
+    df = fetch_prices(end, days, locations)
 
-...
+    # Getting chart from function defined in strompris.py
+    chart = plot_prices(df)
+
+    # Converting chart to vega-lite JSON char alt.Chart.to_dict()
+    json_chart = chart.to_dict()
+
+    return json_chart
 
 # Task 5.6 (bonus):
 # `GET /activity` should render the `activity.html` template
