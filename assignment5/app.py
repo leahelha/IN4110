@@ -6,7 +6,7 @@ from __future__ import annotations
 import datetime
 import os
 
-import uvicornp
+import uvicorn
 from typing import List, Optional
 from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
