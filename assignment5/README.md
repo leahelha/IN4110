@@ -7,7 +7,7 @@
 Clone the assignment5 folder on your PC
 Install all required packages with 'pip install -e .'
 
-The required packagese are listed in requires.txt
+The required packagese are listed in requirements.txt
 
 ## Features of project
 
