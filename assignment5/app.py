@@ -70,7 +70,7 @@ def plot_prices_json(
     # Getting chart from function defined in strompris.py
     chart = plot_prices(df)
 
-    # Converting chart to vega-lite JSON char alt.Chart.to_dict()
+    # Converting chart 
     json_chart = chart.to_dict()
 
     return json_chart

@@ -1,6 +1,7 @@
 # IN3110 strømpris
 
-Tasks completed: 5.1, 5.2
+## Tasks completed: 
+5.1, 5.2
 
 ## Requirements:
 Clone the assignment5 folder on your PC
