@@ -1,6 +1,8 @@
+from typing import List, Optional
 import datetime
 import re
 from urllib.parse import urlencode, urljoin, urlparse
+
 
 import altair as alt
 import pandas as pd

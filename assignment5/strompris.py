@@ -14,7 +14,7 @@ import altair as alt
 import pandas as pd
 import requests
 import requests_cache
-
+from typing import List, Optional
 
 
 # install an HTTP request cache
@@ -46,6 +46,9 @@ def fetch_day_prices(date: datetime.date = None, location: str = "NO1") -> pd.Da
     if date is None:
         date = datetime.date.today()  # Getting today's date unless otherwise specified
 
+    if location is None:
+        location = "NO1"
+
     year, month, day = date.year, date.strftime("%m"), date.strftime("%d")  # Splitting the date into year, month and day, %m and %d make sure we get a leading 0
     
     #print(date)
@@ -73,10 +76,10 @@ LOCATION_CODES = {"NO1":"Oslo", "NO2":"Kristiansand", "NO3":"Trondheim", "NO4":"
 
 
 def fetch_prices(
-    end_date: datetime.date = None,
-    days: int = 7,
-    locations: list[str] = tuple(LOCATION_CODES.keys()),
-) -> pd.DataFrame:
+    end_date: datetime.date = None, 
+    days: int = 7, 
+    locations: list[str] = tuple(LOCATION_CODES.keys())
+    ) -> pd.DataFrame:
     """Fetch prices for multiple days and locations into a single DataFrame
     Returns a DataFrame with the prices for a given time period.
 
@@ -90,13 +93,20 @@ def fetch_prices(
     Returns:
     df: a DataFrame containing electricity prices over the given period
     """
+    if days is None:
+        days = int(7)
 
     if end_date is None:
         end_date = datetime.date.today()
 
+    if locations is None:
+        locations = tuple(LOCATION_CODES.keys())
+
     start_date = end_date - datetime.timedelta(days=days-1)
     
     all_data = []
+
+    
 
     # Iterating over the dates
     for i in range(days):
@@ -133,21 +143,21 @@ def fetch_prices(
     return df
 
 
-# #test_date = datetime.date(2023, 10, 3)
-test_run = fetch_prices()
-print(test_run)
-
 # task 5.1:
 
 
 def plot_prices(df: pd.DataFrame) -> alt.Chart:
-    """Plot energy prices over time
+    """Plot energy prices over time and saves an html file of the plot.
 
-    x-axis should be time_start
-    y-axis should be price in NOK
-    each location should get its own line
+    x-axis is be time_start
+    y-axis is be price in NOK
+    each location gets its own line
 
-    Make sure to document arguments and return value...
+    Parameters:
+    df: pd.DataFrame, containing the data for electricity prices over time. df is produced by fetch_prices
+
+    Returns:
+    chart: alt.Chart, an altair chart which we can then show in a browser. Note the function also saves the chart as an html.
     """
    # Plotting with altair
     chart = alt.Chart(df).mark_line().encode(
@@ -166,8 +176,7 @@ def plot_prices(df: pd.DataFrame) -> alt.Chart:
     return chart
 
 
-test_run2 = plot_prices(test_run)
-test_run2.show()
+
 
 # Task 5.4
 
@@ -217,5 +226,5 @@ def main():
     chart.show()
 
 
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    main()

@@ -1,5 +1,5 @@
 import datetime
-
+from typing import List, Optional
 import altair as alt
 import numpy.testing as nt
 import pytest

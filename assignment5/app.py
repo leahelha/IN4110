@@ -6,6 +6,7 @@ from __future__ import annotations
 import datetime
 import os
 
+from typing import List, Optional
 from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 
@@ -58,9 +59,10 @@ def strompris_template(request: Request):
 @app.get('/plot_prices.json')
 def plot_prices_json(
     locations: Optional[List[str]] = Query(default=None),
-    end: Optional[date] = None,
+    end: Optional[datetime.date] = None,
     days: Optional[int] = 7
 ):
+    
     # Getting the DataFrame produced through function defined in strompris.py
     df = fetch_prices(end, days, locations)
 
