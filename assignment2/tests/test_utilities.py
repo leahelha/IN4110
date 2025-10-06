@@ -49,7 +49,7 @@ def test_get_diagnostics(example_config):
         (NotADirectoryError, "/Not_a_real_directory"),
         (NotADirectoryError, "/Not_a_real_directory.csv"),
         (TypeError, 3),
-        # add more combinations of (exception, dir) here
+        
     ],
 )
 
@@ -185,7 +185,7 @@ def test_merge_parent_and_basename():
         (TypeError, 33),
         (ValueError, '/src_agriculture/'),
         (ValueError, 'CH4.csv/'),
-        # add more combinations of (exception, path) here
+        
     ],
 )
 def test_merge_parent_and_basename_exceptions(exception, path):

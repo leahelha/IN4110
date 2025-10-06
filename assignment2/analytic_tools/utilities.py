@@ -153,10 +153,10 @@ def display_directory_tree(dir: str | Path, maxfiles: int = 3) -> None:
 
 
     if not directory.exists():
-        raise NotADirectoryError(f'The path "{path}" does not exist.')
+        raise NotADirectoryError(f'The path "{directory}" does not exist.')
 
     if not directory.is_dir():
-        raise NotADirectoryError(f' "{path}" is not a directory')
+        raise NotADirectoryError(f' "{directory}" is not a directory')
 
     
     print('\n')
@@ -303,6 +303,7 @@ def merge_parent_and_basename(path: str | Path) -> str:
     new_base = f'{parentname}_{filename}'
     return new_base
 
+
 def delete_directories(path_list: List[str | Path]) -> None:
     """Prompt the user for permission and delete the objects pointed to by the paths in path_list if
        permission is given. If the object is a directory, its whole directory tree is removed.
@@ -314,5 +315,5 @@ def delete_directories(path_list: List[str | Path]) -> None:
     Returns:
     None
     """
-    # note: This is an optional task, no points assigned. If you are skipping it, remove `raise NotImplementedError` in the function body
+    # note: This is an optional task, no points assigned. Leaving this to attempt post deadline.
     

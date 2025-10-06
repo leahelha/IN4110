@@ -1,16 +1,16 @@
-# IN3110-leaheh
+# IN3110/IN4110 — Coursework Portfolio (Leah Hansen)
 
-This is the repository where you will do all assignments for IN3110 or 4110.
+Welcome — this repository showcases my work for the University of Oslo course **IN4110: Problem Solving with High-Level Languages**. It contains a sequence of programming assignments that emphasize readable code, testing, reproducibility, and scientific computing practices.
 
-You can clone it with:
-
-    git clone git@github.uio.no:IN3110/IN3110-leaheh
-
-Assignments will be completed in the `assignment1`, `assignment2`, etc. folders of this repo. They should have these exact names. There should be no reason to create files outside these folders for this course.
-
-Turning in an assignment is pushing to this repo. There are no other actions to take, other than double-checking https://github.uio.no/IN3110/IN3110-leaheh for the correct contents.
-
-Always make sure that you push to the repo at `IN3110/IN3110-leaheh`, and _not_ `leaheh/IN3110-leaheh`. Pushing to your own fork __is not__ turning in the assignment.
+## What you’ll find
+- **Assignments 1–5** (`assignment1/`, `assignment2/`, …): Self-contained tasks demonstrating data processing, numerical methods, and software engineering patterns.
 
 
-Assignments and the assignment schedule are published at http://pages.github.uio.no/IN3110/assignments/assignments/
+## Focus areas
+- **Scientific Python:** NumPy, Pandas, plotting, and performance-aware code.
+- **Software engineering:** Modular design, type hints, documentation strings, and CI-friendly structure.
+- **Reproducibility:** Deterministic workflows, version control discipline, and environment management.
+
+## How to navigate
+- Start with the highest-numbered assignment for the most recent work.
+- Each assignment folder includes a short README describing the task, inputs/outputs, and how to run tests.

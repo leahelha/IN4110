@@ -61,7 +61,7 @@ def test_analyze_pollution_data(tmp_workdir: Path):
         pollution_data_restructured.exists()
     ), "analyze_pollution_data did not create pollution_data_restructured"
 
-    # Check if it's subdirectories exist
+    # Check if its subdirectories exist
     by_gas = pollution_data_restructured / "by_gas"
     figures = pollution_data_restructured / "figures"
     assert (
